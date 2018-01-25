@@ -1,0 +1,39 @@
+# Contributor: Sören Tempel <soeren+alpine@soeren-tempel.net>
+# Maintainer: Carlo Landmeter <clandmeter@gmail.com>
+pkgname=htop-rpi
+pkgver=2.0.2
+pkgrel=2
+pkgdesc="An interactive process viewer"
+url="https://github.com/wbenny/htop/"
+arch="all"
+license="GPL2"
+depends=""
+makedepends="ncurses-dev
+             autoconf
+             automake"
+subpackages="$pkgname-doc"
+source="$url/archive/$pkgver-$pkgrel.tar.gz"
+
+_builddir="$srcdir"/htop-$pkgver-$pkgrel
+build() {
+        cd "$_builddir"
+        ./autogen.sh || return 1
+        ./configure \
+                --build=$CBUILD \
+                --host=$CHOST \
+                --prefix=/usr \
+                --sysconfdir=/etc \
+                --mandir=/usr/share/man \
+                --localstatedir=/var \
+                --enable-cgroups \
+                --enable-taskstats \
+                || return 1
+        make || return 1
+}
+
+package() {
+        cd "$_builddir"
+        make DESTDIR="$pkgdir" install || return 1
+}
+
+sha512sums="7053ea2483a3d0ed3a2fb0dc38ff9a94d3729d27be6bfecae8682e116beec7674c8e8cf28946373bffaede3f2422624cddd2432ebda34b00448a27909b709456  2.0.2-2.tar.gz"
