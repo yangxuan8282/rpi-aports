@@ -1,0 +1,36 @@
+# Maintainer: Yangxuan <yangxuan8282@gmail.com>
+pkgname=xf86-video-fbturbo
+pkgver=3.9.6
+pkgrel=0
+pkgdesc="X.org MALI video driver"
+url="https://github.com/asb/xf86-video-fbturbo"
+arch="all"
+license="MIT"
+subpackages="$pkgname-doc"
+depends=
+makedepends="autoconf automake libtool xorg-server-dev util-macros fontsproto"
+
+source="http://archive.raspberrypi.org/debian/pool/main/x/xserver-xorg-video-fbturbo/xserver-xorg-video-fbturbo_1.20170324~143242.tar.xz"
+
+builddir="$srcdir"/xserver-xorg-video-fbturbo-1.20170324~143242
+
+build() {
+	cd "$builddir"
+	export LDFLAGS="$LDFLAGS -Wl,-z,lazy"
+	./autogen.sh || reture 1
+	./configure \
+		--build=$CBUILD \
+		--host=$CHOST \
+		--prefix=/usr \
+		|| return 1
+	make || return 1
+}
+
+package() {
+	cd "$builddir"
+	mkdir -p "$pkgdir"/etc/X11/xorg.conf.d/
+	cp "99-fbturbo.conf" "$pkgdir"/etc/X11/xorg.conf.d/99-fbturbo.conf
+	make DESTDIR="$pkgdir" install || return 1	
+	install -Dm644 COPYING "$pkgdir"/usr/share/licenses/$pkgname/COPYING
+}
+sha512sums="b143ead87a915f4162318633d609b88efacddd94e14ab496fce1074f83926cbb9fd5be7e8453472d6747684c73d49b0f3b564e19def6f6d378796ee9306ed36e  xserver-xorg-video-fbturbo_1.20170324~143242.tar.xz"
