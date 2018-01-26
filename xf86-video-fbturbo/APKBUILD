@@ -17,7 +17,7 @@ builddir="$srcdir"/xserver-xorg-video-fbturbo-1.20170324~143242
 build() {
 	cd "$builddir"
 	export LDFLAGS="$LDFLAGS -Wl,-z,lazy"
-	./autogen.sh || reture 1
+	./autogen.sh || return 1
 	./configure \
 		--build=$CBUILD \
 		--host=$CHOST \
