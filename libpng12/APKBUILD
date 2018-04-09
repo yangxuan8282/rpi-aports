@@ -1,0 +1,49 @@
+# Contributor: Carlo Landmeter <clandmeter@gmail.com>
+# Maintainer: Natanael Copa <ncopa@alpinelinux.org>
+pkgname=libpng
+pkgver=1.2.59
+_apngver=1.2.59
+pkgrel=0
+pkgdesc="Portable Network Graphics library"
+url="http://www.libpng.org/"
+arch="all"
+license="GPL"
+depends=""
+depends_dev="zlib-dev"
+makedepends="$depends_dev gawk"
+subpackages="$pkgname-doc $pkgname-dev"
+source="http://downloads.sourceforge.net/$pkgname/$pkgname-$pkgver.tar.gz
+	http://downloads.sourceforge.net/sourceforge/libpng-apng/libpng-$_apngver-apng.patch.gz
+
+	"
+
+builddir="$srcdir"/$pkgname-$pkgver
+
+prepare() {
+	cd "$builddir"
+	gunzip -c "$srcdir"/libpng-$_apngver-apng.patch.gz | patch -p1 || return 1
+	default_prepare || return 1
+}
+
+build() {
+	cd "$builddir"
+	./configure \
+		--build=$CBUILD \
+		--host=$CHOST \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--mandir=/usr/share/man \
+		--localstatedir=/var \
+		|| return 1
+	make || return 1
+}
+
+package() {
+	cd "$builddir"
+	make DESTDIR="$pkgdir" install || return 1
+	install -Dm644 LICENSE \
+		"$pkgdir"/usr/share/licenses/$pkgname/LICENSE || return 1
+}
+
+sha512sums="b7327c5cea8a33127ab0eae1366adf9238b7b55bc6488fec28f40577943f4344e441859146c1b0d14a27a8f452d93e4137562b1f3b63556d9cb6c07bab147b06  libpng-1.2.59.tar.gz
+5e405e8c444956b5f30cb2bc8c55f8050c038287afa4b478d237a02084428c9ecda60bc0015c4ca915bf9784492ad3d854a627f165fa62040817cd19f32234c0  libpng-1.2.59-apng.patch.gz"
