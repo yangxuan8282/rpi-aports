@@ -1,0 +1,31 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+pkgname=waveshare35b
+pkgver=1
+pkgrel=1
+pkgdesc="Waveshare 3.5inch RPi LCD (B) drivers"
+url="http://www.waveshare.net/wiki/3.5inch_RPi_LCD_(B)"
+arch="armhf"
+license="multiple"
+depends="xf86-input-evdev xinput_calibrator"
+install="$pkgname.post-install"
+source="http://www.waveshare.net/w/upload/3/34/LCD-show-180331.tar.gz
+        $install"
+
+package() {
+        cd "$srcdir"/LCD-show
+        
+        mkdir -p "$pkgdir"/boot/overlays
+        mkdir -p "$pkgdir"/usr/share/X11/xorg.conf.d/
+        mkdir -p "$pkgdir"/etc/X11/xorg.conf.d
+        
+        install -Dm644 waveshare35b-overlay.dtb "${pkgdir}"/media/mmcblk0p1/overlays/waveshare35b-overlay.dtb
+        install -Dm644 waveshare35b-overlay.dtb "${pkgdir}"/media/mmcblk0p1/overlays/waveshare35b.dtbo
+        
+        cp usr/share/X11/xorg.conf.d/99-fbturbo.conf "${pkgdir}"/usr/share/X11/xorg.conf.d/
+        
+        cp etc/X11/xorg.conf.d/99-calibration.conf-35b "${pkgdir}"/usr/share/X11/xorg.conf.d/99-calibration.conf
+        cp etc/X11/xorg.conf.d/99-calibration.conf-35b* "$pkgdir"/etc/X11/xorg.conf.d/
+}
+
+sha512sums="adfb2950d92a3f69e72f424c4782416a603355e9323843b385e98d3c86f75dd2d6b02938a77f933de02bb0d4e0dc626e4934c5dc2455949b922f9eb6411bd0c6  LCD-show-180331.tar.gz
+88d052a77d7048f7f5de141fdd5a797b970ace3b95dfd975a7839f6dad5cbb11c5dfd9146b4f79ec955b7abf2962f40fce0214b7b1e0b2b4eed32c7775cd8dbb  waveshare35b.post-install"

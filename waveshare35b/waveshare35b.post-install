@@ -1,0 +1,29 @@
+#!/bin/sh
+
+set -xe
+
+cp -rf /usr/share/X11/xorg.conf.d/10-evdev.conf /usr/share/X11/xorg.conf.d/45-evdev.conf
+
+echo "fbcon=map:10 fbcon=font:ProFont6x11 logo.nologo" >> /media/mmcblk0p1/cmdline.txt
+
+mod_config_txt() {
+	cat <<EOF
+hdmi_force_hotplug=1
+
+dtparam=i2c_arm=on
+dtparam=spi=on
+
+enable_uart=1
+
+dtoverlay=waveshare35b
+
+hdmi_group=2
+hdmi_mode=1
+hdmi_mode=87
+hdmi_cvt 480 320 60 6 0 0 0
+hdmi_drive=2
+display_rotate=0
+EOF
+}
+
+mod_config_txt >> /media/mmcblk0p1/config.txt
