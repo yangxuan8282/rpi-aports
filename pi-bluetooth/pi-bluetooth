@@ -1,0 +1,11 @@
+#!/sbin/openrc-run
+
+command="/usr/bin/hciattach"
+command_args="-n /dev/ttyAMA0 bcm43xx 115200 noflow -"
+command_background=true
+pidfile="/run/hciattach.pid"
+
+depend() {
+        after modules
+        need localmount
+}
