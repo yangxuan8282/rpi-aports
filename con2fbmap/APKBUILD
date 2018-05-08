@@ -1,0 +1,25 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+pkgname=con2fbmap
+pkgver=2.1
+pkgrel=30
+pkgdesc="Shows and sets mapping between consoles and framebuffer devices"
+url="http://users.telenet.be/geertu/Linux/fbdev/"
+arch="armhf"
+license="GPL-2"
+depends=""
+makedepends="linux-headers"
+source="http://mirrors.ustc.edu.cn/raspbian/raspbian/pool/main/f/fbset/fbset_2.1-30.debian.tar.xz"
+
+build() {
+        cd "$srcdir"
+
+        patch -i debian/patches/03_con2fbmap.patch
+        gcc con2fbmap.c -o con2fbmap
+}
+
+package() {
+        cd "$srcdir"
+        install -Dm755 con2fbmap ${pkgdir}/usr/bin/con2fbmap
+}
+
+sha512sums="4c20e21ad1c03f52a91a66a5e7019e02412f2d7326de5251cc08abdfd81cd94a393258eb154c62278f144eb42f8c234587e6fe829785fd52ab54aad5a931755a  fbset_2.1-30.debian.tar.xz"

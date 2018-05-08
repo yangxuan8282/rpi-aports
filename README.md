@@ -1,31 +1,54 @@
-[ffmpeg-3.4-r1.apk](./apks/ffmpeg-3.4-r1.apk)
+## list:
 
-[ffmpeg-dev-3.4-r1.apk](./apks/ffmpeg-dev-3.4-r1.apk)
+### Application
 
-[ffmpeg-doc-3.4-r1.apk](./apks/ffmpeg-doc-3.4-r1.apk)
+- ffmpeg-mmal - ffmpeg with mmal 
 
-[ffmpeg-libs-3.4-r1.apk](./apks/ffmpeg-libs-3.4-r1.apk)
+- htop-rpi - htop with temperature display, for raspberry pi
 
-[htop-rpi-2.0.2-r2.apk](./apks/htop-rpi-2.0.2-r2.apk)
+### base
 
-[htop-rpi-doc-2.0.2-r2.apk](./apks/htop-rpi-doc-2.0.2-r2.apk)
+- glibc
 
-[linux-rpi2-4.9.65-r0.apk](./apks/linux-rpi2-4.9.65-r0.apk)
+- libpng12
 
-[linux-rpi2-4.9.76-r0.apk](./apks/linux-rpi2-4.9.76-r0.apk)
+### kernel
 
-[linux-rpi2-dev-4.9.65-r0.apk](./apks/linux-rpi2-dev-4.9.65-r0.apk)
+- linux-rpi - alpine raspberry pi kernel with VC4 enabled
 
-[linux-rpi2-dev-4.9.76-r0.apk](./apks/linux-rpi2-dev-4.9.76-r0.apk)
+### drivers
 
-[linux-rpi-4.9.65-r0.apk](./apks/linux-rpi-4.9.65-r0.apk)
+- pi-bluetooth - zero, 3B/3B plus bluetooth driver
 
-[linux-rpi-4.9.76-r0.apk](./apks/linux-rpi-4.9.76-r0.apk)
+- waveshare35b - waveshare 3.5B drivers
 
-[linux-rpi-dev-4.9.65-r0.apk](./apks/linux-rpi-dev-4.9.65-r0.apk)
+- xf86-video-fbturbo
 
-[linux-rpi-dev-4.9.76-r0.apk](./apks/linux-rpi-dev-4.9.76-r0.apk)
+### framebuffer use
 
-[xf86-video-fbturbo-3.9.6-r0.apk](./apks/xf86-video-fbturbo-3.9.6-r0.apk)
+- con2fbmap 
 
-[xf86-video-fbturbo-doc-3.9.6-r0.apk](./apks/xf86-video-fbturbo-doc-3.9.6-r0.apk)
+- raspi2fb
+
+- rpi-cpfb
+
+## note:
+
+to use framebuffer apps as non-root user, need to add user to [video] group:
+
+```
+sudo addgroup $(whoami) video
+```
+
+for those apps use `/dev/vchiq`, like omxplayer, if want avoid sudo, need setup udev rules:
+
+```
+sudo mkdir -p /etc/udev/rules.d
+```
+
+``` 
+sudo sh -c 'cat > /etc/udev/rules.d/raspberrypi.rules <<"EOF"
+SUBSYSTEM=="vchiq|input", MODE="0777"
+KERNEL=="mouse*|mice|event*",  MODE="0777"
+EOF'
+```

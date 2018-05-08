@@ -1,0 +1,27 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+pkgname=raspi2fb
+pkgver=1
+pkgrel=1
+pkgdesc="Program to copy the Raspberry Pi display to a secondary framebuffer."
+url="https://github.com/AndrewFromMelbourne/raspi2fb"
+arch="armhf"
+license="MIT"
+depends="raspberrypi-libs"
+makedepends="cmake libbsd-dev raspberrypi-dev"
+source="$pkgname.tar.gz"
+
+build() {
+        cd "$srcdir"/$pkgname
+
+        mkdir build
+        cd build
+        cmake ..
+        make
+}
+
+package() {
+        cd "$srcdir"/$pkgname
+        install -Dm755 build/$pkgname ${pkgdir}/usr/bin/$pkgname
+}
+
+sha512sums="43cc2657b5dde5337e678aa772700574c15a1cfd231f0d37d12c3608ec7c78bfbb226620482482a7ad8ace827d3ad9d0e92e2c07ff7535edbb183091eec2ac90  raspi2fb.tar.gz"
