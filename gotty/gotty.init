@@ -1,0 +1,27 @@
+#!/sbin/openrc-run
+
+name=gotty
+
+depend() {
+    need net
+    need localmount
+}
+
+start() {
+    ebegin "Starting gotty"
+    start-stop-daemon --background --start --exec \
+    env PS1='\h:\w\$ ' HOME='/home/alpine' TERM='xterm' \
+    /usr/bin/gotty \
+    -u alpine \
+    --make-pidfile --pidfile /run/gotty.pid \
+    -- -w /bin/bash
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping gotty"
+    start-stop-daemon --stop --exec /usr/bin/gotty \
+    --pidfile /run/gotty.pid \
+    -s 1
+    eend $?
+}
