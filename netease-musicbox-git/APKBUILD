@@ -1,0 +1,25 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+pkgname=netease-musicbox-git
+_gitname=musicbox
+pkgver=0.24
+pkgrel=99
+pkgdesc="A sexy command line interface musicbox for NetEase based on Python"
+url="https://github.com/darknessomi/musicbox"
+arch="noarch"
+license="MIT"
+depends="python3 mpg123 py3-requests py3-crypto py3-future py3-lxml"
+makedepengs="py3-setuptools"
+install="$pkgname.post-install"
+source="$_gitname.tar.gz
+        $install"
+
+package() {
+        cd "$srcdir/$_gitname"
+        
+        python3 setup.py install --root="$pkgdir/" --optimize=1
+        mkdir -p "${pkgdir}/usr/share/licenses/${pkgname}"
+        install -m755 LICENSE.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
+}
+
+sha512sums="09088161f12f1852be4bb06eeea25d4e70c53be2302d3b17fc4efd58dc46d75dfbeee79659f1e5f9581b6096ee5e11a338073a740977710c47f6ff96678ead25  musicbox.tar.gz
+af0247dacc3397311445290ac8271394002974fe7b13207fefe2a32367416a6d74159244317b6fe7cbea0796e2925cfa76d0901c6f137b6370738c311bbd42b7  netease-musicbox-git.post-install"

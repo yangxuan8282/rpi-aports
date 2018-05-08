@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# py3-beautifulsoup4 is only available in edge/testing repositories now, so need to install it with pip instead
+pip3 install setuptools
+pip3 install beautifulsoup4
