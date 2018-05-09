@@ -1,6 +1,6 @@
 # Maintainer: He Yangxuan <yangxuan8282@gmail.com>
 pkgname=waveshare35b
-pkgver=20171219
+pkgver=20180331
 pkgrel=1
 pkgdesc="Waveshare 3.5inch RPi LCD (B) drivers"
 url="http://www.waveshare.net/wiki/3.5inch_RPi_LCD_(B)"
@@ -8,11 +8,10 @@ arch="armhf"
 license="multiple"
 depends="xf86-input-evdev xinput_calibrator"
 install="$pkgname.post-install"
-source="http://www.waveshare.net/w/upload/9/99/LCD-show-171219.tar.gz
+source="http://www.waveshare.net/w/upload/3/34/LCD-show-180331.tar.gz
         $install
         waveshare.txt
         set-orientation"
-options="!check"
 
 package() {
         install -Dm644 waveshare.txt "${pkgdir}"/media/mmcblk0p1/waveshare.txt
@@ -32,7 +31,7 @@ package() {
         cp etc/X11/xorg.conf.d/99-calibration.conf-35b* "$pkgdir"/etc/X11/xorg.conf.d/
 }
 
-sha512sums="89545b94baacee7ffb0dbb664d54965dbc380e60093442a518f663144ba1dbe60d8880fdba7563a3e538276d0f5e1a6da6478d6a33b0af365f99f52d70d9309d  LCD-show-171219.tar.gz
+sha512sums="adfb2950d92a3f69e72f424c4782416a603355e9323843b385e98d3c86f75dd2d6b02938a77f933de02bb0d4e0dc626e4934c5dc2455949b922f9eb6411bd0c6  LCD-show-180331.tar.gz
 1b61296a6f807509a18610b9b3ef3fc7f52219fb0346fd89774bd1dc25617e9e9455e6d672ddbb4c6d43aefe6bbc2f2cabddee8b400746bdcf96d717bf8489c7  waveshare35b.post-install
-e8955db5adf6e063cbb082975c8068e34e17f7904fff8103ca833567a1d51131ca466481c6d6ca0f25508abda15f00ddc0e2b71584b42af984e46ab450fd9895  waveshare.txt
+600d1ba0dc0e53cd1344766256f5565911ee92571b437aef5f9cb413d1b3bae67db9c11700cdcf4ecef6b5a80b651034ab831f929c029147e60826f1424551ba  waveshare.txt
 a3fbe9bfed291536a3ffcef1ed76d1e3efa60ccafc56f3fbfa3174e96c29477bffda2d99178ba40314e0905ea0f113d9cbd36d4fdb6e345fe34c873159aaf15d  set-orientation"
