@@ -1,0 +1,13 @@
+hdmi_force_hotplug=1
+
+dtparam=i2c_arm=on
+dtparam=spi=on
+
+enable_uart=1
+
+# Enable audio (loads snd_bcm2835)
+dtparam=audio=yes
+# Improve audio quality of 3.5mm audio jack
+audio_pwm_mode=2
+
+dtoverlay=waveshare35b

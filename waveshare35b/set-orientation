@@ -1,7 +1,7 @@
 #!/bin/sh
 # set orientation for Waveshare 3.5inch RPi LCD (B)
 
-set -xe
+set -eu
 
 NEW_DEGREE=$1
 
@@ -20,22 +20,22 @@ if [ -z "$NEW_DEGREE" ]
 fi
 
 set_orientation_0() {
-	sed -i 's/display_rotate=.*/display_rotate=0/' /media/mmcblk0p1/config.txt || echo "display_rotate=0" >> /media/mmcblk0p1/config.txt
+	sed -i 's/dtoverlay=waveshare35b.*/dtoverlay=waveshare35b/' /media/mmcblk0p1/waveshare.txt || echo "display_rotate=0" >> /media/mmcblk0p1/waveshare.txt
 	cp /etc/X11/xorg.conf.d/99-calibration.conf-35b /usr/share/X11/xorg.conf.d/99-calibration.conf
 }
 
 set_orientation_90() {
-	sed -i 's/display_rotate=.*/display_rotate=1/' /media/mmcblk0p1/config.txt || echo "display_rotate=1" >> /media/mmcblk0p1/config.txt
+	sed -i 's/dtoverlay=waveshare35b.*/dtoverlay=waveshare35b:rotate=180/' /media/mmcblk0p1/waveshare.txt || echo "dtoverlay=waveshare35b:rotate=180" >> /media/mmcblk0p1/waveshare.txt
 	cp /etc/X11/xorg.conf.d/99-calibration.conf-35b-270 /usr/share/X11/xorg.conf.d/99-calibration.conf
 }
 
 set_orientation_180() {
-	sed -i 's/display_rotate=.*/display_rotate=2/' /media/mmcblk0p1/config.txt || echo "display_rotate=2" >> /media/mmcblk0p1/config.txt
+	sed -i 's/dtoverlay=waveshare35b.*/dtoverlay=waveshare35b:rotate=270/' /media/mmcblk0p1/waveshare.txt || echo "dtoverlay=waveshare35b:rotate=270" >> /media/mmcblk0p1/waveshare.txt
 	cp /etc/X11/xorg.conf.d/99-calibration.conf-35b-180 /usr/share/X11/xorg.conf.d/99-calibration.conf
 }
 
 set_orientation_270() {
-	sed -i 's/display_rotate=.*/display_rotate=3/' /media/mmcblk0p1/config.txt || echo "display_rotate=3" >> /media/mmcblk0p1/config.txt
+	sed -i 's/dtoverlay=waveshare35b.*/dtoverlay=waveshare35b:rotate=0/' /media/mmcblk0p1/waveshare.txt || echo "dtoverlay=waveshare35b:rotate=0" >> /media/mmcblk0p1/waveshare.txt
 	cp /etc/X11/xorg.conf.d/99-calibration.conf-35b-90 /usr/share/X11/xorg.conf.d/99-calibration.conf
 }
 

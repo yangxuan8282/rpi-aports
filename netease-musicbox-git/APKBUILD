@@ -12,6 +12,7 @@ makedepengs="py3-setuptools"
 install="$pkgname.post-install"
 source="$_gitname.tar.gz
         $install"
+options="!check"
 
 package() {
         cd "$srcdir/$_gitname"
