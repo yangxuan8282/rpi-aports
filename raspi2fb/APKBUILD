@@ -8,10 +8,11 @@ arch="armhf"
 license="MIT"
 depends="raspberrypi-libs"
 makedepends="cmake libbsd-dev raspberrypi-dev"
-source="$pkgname.tar.gz"
+source="$pkgname.tar.gz::$url/archive/master.tar.gz"
+options="!check"
 
 build() {
-        cd "$srcdir"/$pkgname
+        cd "$srcdir"/$pkgname-master
 
         mkdir build
         cd build
@@ -20,8 +21,8 @@ build() {
 }
 
 package() {
-        cd "$srcdir"/$pkgname
+        cd "$srcdir"/$pkgname-master
         install -Dm755 build/$pkgname ${pkgdir}/usr/bin/$pkgname
 }
 
-sha512sums="43cc2657b5dde5337e678aa772700574c15a1cfd231f0d37d12c3608ec7c78bfbb226620482482a7ad8ace827d3ad9d0e92e2c07ff7535edbb183091eec2ac90  raspi2fb.tar.gz"
+sha512sums="e0517e41cd641811d0e44b2b4655c4b74d75d2ac675ab2d6bbd8a1fac07f3ae1237e9e96e6088dfaaf66a9caa3718d0f9d9fbb17edd8de9efe3da7a767a5e1cb  raspi2fb.tar.gz"

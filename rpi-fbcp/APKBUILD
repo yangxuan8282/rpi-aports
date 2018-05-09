@@ -8,10 +8,11 @@ arch="armhf"
 license="custom:MIT"
 depends="raspberrypi-libs"
 makedepends="cmake linux-headers raspberrypi-dev"
-source="$pkgname.tar.gz"
+source="$pkgname.tar.gz::$url/archive/master.tar.gz"
+options="!check"
 
 build() {
-        cd "$srcdir"/$pkgname
+        cd "$srcdir"/$pkgname-master
 
         mkdir build
         cd build
@@ -20,8 +21,8 @@ build() {
 }
 
 package() {
-        cd "$srcdir"/$pkgname
+        cd "$srcdir"/$pkgname-master
         install -Dm755 build/fbcp ${pkgdir}/usr/bin/fbcp
 }
 
-sha512sums="370636430ad8569c4c4b0641484feac93a6f4085a127bcf3c82b6e6a5eb8b334a2b3d3015c1df5dd1839e781ff82659efbc573143d610cee0fd35b2612a7d7e9  rpi-fbcp.tar.gz"
+sha512sums="44edc478b9587a51b1e6874fe385033048e1797c9089f5e719fa1c334b2a2f3fd8c3613bf0b77aa6cbe46f93cb74cdc476493db08110838f691d2a0f84fc1bc7  rpi-fbcp.tar.gz"
