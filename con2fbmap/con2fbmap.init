@@ -1,0 +1,11 @@
+#!/sbin/openrc-run
+
+command="/usr/bin/con2fbmap"
+command_args="1 1"
+command_background=true
+pidfile="/run/con2fbmap.pid"
+
+depend() {
+        after modules
+        need localmount
+}
