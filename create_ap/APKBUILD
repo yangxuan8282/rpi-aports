@@ -1,0 +1,25 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+pkgname=create_ap
+pkgver=0.4.6
+pkgrel=1
+pkgdesc="This script creates a NATed or Bridged WiFi Access Point"
+url="https://github.com/oblique/create_ap/"
+arch="all"
+license="BSD"
+depends="coreutils bash util-linux procps hostapd iproute2 iw dnsmasq iptables"
+source="$pkgname-$pkgver.tar.gz::https://github.com/oblique/create_ap/archive/v0.4.6.tar.gz
+        create_ap.init"
+options="!check"
+
+package() {
+        install -Dm755 create_ap.init "$pkgdir"/etc/init.d/create_ap
+        
+        cd "$srcdir"/$pkgname-$pkgver
+
+        install -Dm755 $pkgname "$pkgdir"/usr/bin/$pkgname
+        install -Dm644 create_ap.conf "$pkgdir"/etc/create_ap.conf
+        install -Dm644 bash_completion "$pkgdir"/usr/share/bash-completion/completions/create_ap
+}
+
+sha512sums="38100296a87eb8f5a29b7e3eff618cd2518859b5a3e24a08058b3839149b159a81a3f12976d1217d5798708bbc5e44dfaceab2f4e636339cdf8a5c0f5c06bd2d  create_ap-0.4.6.tar.gz
+674f63a41984a2107e20b7c703abd968b9ee42d7b8ffa1074dfe9d9ce1e86193aa75500e56b77770f1f85f188cb40068702a132d952837c54b2a10f12a2303df  create_ap.init"

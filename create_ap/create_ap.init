@@ -1,0 +1,25 @@
+#!/sbin/openrc-run
+
+name=create_ap
+
+depend() {
+    need net
+    need localmount
+}
+
+start() {
+    ebegin "Starting create_ap"
+    start-stop-daemon --background --start --exec \
+    /usr/bin/create_ap \
+    --make-pidfile --pidfile /run/create_ap.pid \
+    -- --config /etc/create_ap.conf
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping create_ap"
+    start-stop-daemon --stop --exec /usr/bin/create_ap \
+    --pidfile /run/create_ap.pid \
+    -s 2
+    eend $?
+}
