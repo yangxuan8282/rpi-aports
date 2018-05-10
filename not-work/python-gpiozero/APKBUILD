@@ -1,0 +1,19 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+pkgname=python-gpiozero
+pkgver=1.4.1
+pkgrel=1
+pkgdesc="A simple interface to everyday GPIO components used with Raspberry Pi."
+arch="all"
+url="https://github.com/RPi-Distro/$pkgname"
+license="BSD"
+depends="python3"
+makedepends="py3-setuptools"
+source="$pkgname-v$pkgver.tar.gz::https://github.com/RPi-Distro/python-gpiozero/archive/v$pkgver.tar.gz"
+options="!check"
+
+package() {
+        cd "$srcdir/$pkgname-$pkgver"
+        python3 setup.py install --root="$pkgdir/" --optimize=1
+}
+
+sha512sums="e0a70648003addc0d65a0727f3adc52ae1d86ded52a167c47a1eed999c39ede9dd40f579b70bb9c126c3a98bebf698f520959e886896dfb28db231b61552a40b  python-gpiozero-v1.4.1.tar.gz"

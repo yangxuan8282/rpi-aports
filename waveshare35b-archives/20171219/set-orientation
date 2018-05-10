@@ -1,0 +1,54 @@
+#!/bin/sh
+# set orientation for Waveshare 3.5inch RPi LCD (B)
+
+set -eu
+
+NEW_DEGREE=$1
+
+die() {
+	printf '\033[1;31mERROR:\033[0m %s\n' "$@" >&2  # bold red
+	exit 1
+}
+
+if [ "$(id -u)" -ne 0 ]; then
+	die 'This script must be run as root!'
+fi
+
+if [ -z "$NEW_DEGREE" ]
+	then
+		die 'No degree supplied, please choose from: 0, 90, 180, 270'
+fi
+
+set_orientation_0() {
+	sed -i 's/dtoverlay=waveshare35b.*/dtoverlay=waveshare35b/' /media/mmcblk0p1/waveshare.txt || echo "display_rotate=0" >> /media/mmcblk0p1/waveshare.txt
+	cp /etc/X11/xorg.conf.d/99-calibration.conf-35b /usr/share/X11/xorg.conf.d/99-calibration.conf
+}
+
+set_orientation_90() {
+	sed -i 's/dtoverlay=waveshare35b.*/dtoverlay=waveshare35b:rotate=180/' /media/mmcblk0p1/waveshare.txt || echo "dtoverlay=waveshare35b:rotate=180" >> /media/mmcblk0p1/waveshare.txt
+	cp /etc/X11/xorg.conf.d/99-calibration.conf-35b-270 /usr/share/X11/xorg.conf.d/99-calibration.conf
+}
+
+set_orientation_180() {
+	sed -i 's/dtoverlay=waveshare35b.*/dtoverlay=waveshare35b:rotate=270/' /media/mmcblk0p1/waveshare.txt || echo "dtoverlay=waveshare35b:rotate=270" >> /media/mmcblk0p1/waveshare.txt
+	cp /etc/X11/xorg.conf.d/99-calibration.conf-35b-180 /usr/share/X11/xorg.conf.d/99-calibration.conf
+}
+
+set_orientation_270() {
+	sed -i 's/dtoverlay=waveshare35b.*/dtoverlay=waveshare35b:rotate=0/' /media/mmcblk0p1/waveshare.txt || echo "dtoverlay=waveshare35b:rotate=0" >> /media/mmcblk0p1/waveshare.txt
+	cp /etc/X11/xorg.conf.d/99-calibration.conf-35b-90 /usr/share/X11/xorg.conf.d/99-calibration.conf
+}
+
+case $NEW_DEGREE in
+	  0) set_orientation_0;;
+	 90) set_orientation_90;;
+	180) set_orientation_180;;
+	270) set_orientation_270;;
+	  *) die 'Invalid degree, please choose from: 0, 90, 180, 270'
+esac
+
+cat >&2 <<-EOF
+	---
+	Set orientation to $NEW_DEGREE complete, please reboot to take effect.
+	
+EOF

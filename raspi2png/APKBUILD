@@ -1,0 +1,25 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+pkgname=raspi2png
+pkgver=1
+pkgrel=1
+pkgdesc="Utility to take a snapshot of the Raspberry Pi screen and save it as a PNG file"
+url="https://github.com/AndrewFromMelbourne/raspi2png"
+arch="armhf"
+license="MIT"
+depends="libpng raspberrypi-libs"
+makedepends="libpng libpng-dev raspberrypi-dev"
+source="$pkgname.tar.gz::$url/archive/master.tar.gz"
+options="!check"
+
+build() {
+        cd "$srcdir"/$pkgname-master
+
+        make
+}
+
+package() {
+        cd "$srcdir"/$pkgname-master
+        install -Dm755 $pkgname ${pkgdir}/usr/bin/$pkgname
+}
+
+sha512sums="5cbac448db73223e89319485418a037c02469bbc8fc6e2ed196be91dd22b80588a35eed0d691d7362f8079fd58cb46bfbf05675ff36910cffce5b3819c5fbd50  raspi2png.tar.gz"

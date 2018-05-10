@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -xe
+
+cp -rf /usr/share/X11/xorg.conf.d/10-evdev.conf /usr/share/X11/xorg.conf.d/45-evdev.conf
+
+echo "fbcon=map:10 fbcon=font:ProFont6x11 logo.nologo" >> /media/mmcblk0p1/cmdline.txt
+
+echo "include waveshare.txt" >> /media/mmcblk0p1/config.txt
+

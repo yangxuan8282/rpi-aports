@@ -11,4 +11,3 @@ dtparam=audio=yes
 audio_pwm_mode=2
 
 dtoverlay=waveshare35b
-
