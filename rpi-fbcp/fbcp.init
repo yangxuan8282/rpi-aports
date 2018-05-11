@@ -1,0 +1,18 @@
+#!/sbin/openrc-run
+
+name=fbcp
+
+start() {
+    ebegin "Starting fbcp"
+    start-stop-daemon --background --start --exec \
+    /usr/bin/fbcp \
+    --make-pidfile --pidfile /run/fbcp.pid
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping fbcp"
+    start-stop-daemon --stop --exec /usr/bin/fbcp \
+    --pidfile /run/fbcp.pid
+    eend $?
+}

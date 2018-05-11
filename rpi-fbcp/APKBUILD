@@ -8,7 +8,8 @@ arch="armhf"
 license="custom:MIT"
 depends="raspberrypi-libs"
 makedepends="cmake linux-headers raspberrypi-dev"
-source="$pkgname.tar.gz::$url/archive/master.tar.gz"
+source="$pkgname.tar.gz::$url/archive/master.tar.gz
+        fbcp.init"
 options="!check"
 
 build() {
@@ -21,6 +22,8 @@ build() {
 }
 
 package() {
+        install -Dm755 fbcp.init ${pkgdir}/etc/init.d/fbcp
+
         cd "$srcdir"/$pkgname-master
         install -Dm755 build/fbcp ${pkgdir}/usr/bin/fbcp
 }

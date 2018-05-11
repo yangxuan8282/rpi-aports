@@ -4,17 +4,17 @@ name=gotty
 
 depend() {
     need net
+    use logger
     need localmount
 }
 
 start() {
     ebegin "Starting gotty"
     start-stop-daemon --background --start --exec \
-    env PS1='\h:\w\$ ' HOME='/home/alpine' TERM='xterm' \
     /usr/bin/gotty \
     -u alpine \
     --make-pidfile --pidfile /run/gotty.pid \
-    -- -w /bin/bash
+    -- -w ssh alpine@localhost
     eend $?
 }
 
