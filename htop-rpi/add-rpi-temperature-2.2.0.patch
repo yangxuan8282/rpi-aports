@@ -1,0 +1,433 @@
+diff --git a/CRT.c b/CRT.c
+index ca9a10d..cfae123 100644
+--- a/CRT.c
++++ b/CRT.c
+@@ -128,6 +128,12 @@ typedef enum ColorElements_ {
+    CPU_SOFTIRQ,
+    CPU_STEAL,
+    CPU_GUEST,
++   TEMPERATURE_COOL,
++   TEMPERATURE_MEDIUM,
++   TEMPERATURE_HOT,
++   CPUFREQ_LOW,
++   CPUFREQ_MEDIUM,
++   CPUFREQ_HIGH,
+    LAST_COLORELEMENT
+ } ColorElements;
+ 
+@@ -232,6 +238,12 @@ int CRT_colorSchemes[LAST_COLORSCHEME][LAST_COLORELEMENT] = {
+       [CPU_SOFTIRQ] = ColorPair(Magenta,Black),
+       [CPU_STEAL] = ColorPair(Cyan,Black),
+       [CPU_GUEST] = ColorPair(Cyan,Black),
++      [TEMPERATURE_COOL] = A_DIM | ColorPair(Green,Black),
++      [TEMPERATURE_MEDIUM] = A_NORMAL | ColorPair(Yellow,Black),
++      [TEMPERATURE_HOT] = A_BOLD | ColorPair(Red,Black),
++      [CPUFREQ_LOW] = A_DIM | ColorPair(Green,Black),
++      [CPUFREQ_MEDIUM] = A_NORMAL | ColorPair(Yellow,Black),
++      [CPUFREQ_HIGH] = A_BOLD | ColorPair(Red,Black),
+    },
+    [COLORSCHEME_MONOCHROME] = {
+       [RESET_COLOR] = A_NORMAL,
+@@ -291,6 +303,12 @@ int CRT_colorSchemes[LAST_COLORSCHEME][LAST_COLORELEMENT] = {
+       [CPU_SOFTIRQ] = A_BOLD,
+       [CPU_STEAL] = A_REVERSE,
+       [CPU_GUEST] = A_REVERSE,
++      [TEMPERATURE_COOL] = A_DIM,
++      [TEMPERATURE_MEDIUM] = A_NORMAL,
++      [TEMPERATURE_HOT] = A_BOLD,
++      [CPUFREQ_LOW] = A_DIM,
++      [CPUFREQ_MEDIUM] = A_NORMAL,
++      [CPUFREQ_HIGH] = A_BOLD,
+    },
+    [COLORSCHEME_BLACKONWHITE] = {
+       [RESET_COLOR] = ColorPair(Black,White),
+@@ -350,6 +368,12 @@ int CRT_colorSchemes[LAST_COLORSCHEME][LAST_COLORELEMENT] = {
+       [CPU_SOFTIRQ] = ColorPair(Blue,White),
+       [CPU_STEAL] = ColorPair(Cyan,White),
+       [CPU_GUEST] = ColorPair(Cyan,White),
++      [TEMPERATURE_COOL] = ColorPair(Green,White),
++      [TEMPERATURE_MEDIUM] = ColorPair(Yellow,White),
++      [TEMPERATURE_HOT] = ColorPair(Red,White),
++      [CPUFREQ_LOW] = ColorPair(Green,White),
++      [CPUFREQ_MEDIUM] = ColorPair(Yellow,White),
++      [CPUFREQ_HIGH] = ColorPair(Red,White),
+    },
+    [COLORSCHEME_LIGHTTERMINAL] = {
+       [RESET_COLOR] = ColorPair(Black,Black),
+@@ -409,6 +433,12 @@ int CRT_colorSchemes[LAST_COLORSCHEME][LAST_COLORELEMENT] = {
+       [CPU_SOFTIRQ] = ColorPair(Blue,Black),
+       [CPU_STEAL] = ColorPair(Black,Black),
+       [CPU_GUEST] = ColorPair(Black,Black),
++      [TEMPERATURE_COOL] = ColorPair(Green,Black),
++      [TEMPERATURE_MEDIUM] = ColorPair(Yellow,Black),
++      [TEMPERATURE_HOT] = ColorPair(Red,Black),
++      [CPUFREQ_LOW] = ColorPair(Green,Black),
++      [CPUFREQ_MEDIUM] = ColorPair(Yellow,Black),
++      [CPUFREQ_HIGH] = ColorPair(Red,Black),
+    },
+    [COLORSCHEME_MIDNIGHT] = {
+       [RESET_COLOR] = ColorPair(White,Blue),
+@@ -468,6 +498,12 @@ int CRT_colorSchemes[LAST_COLORSCHEME][LAST_COLORELEMENT] = {
+       [CPU_SOFTIRQ] = ColorPair(Black,Blue),
+       [CPU_STEAL] = ColorPair(White,Blue),
+       [CPU_GUEST] = ColorPair(White,Blue),
++      [TEMPERATURE_COOL] = A_DIM | ColorPair(Green,Blue),
++      [TEMPERATURE_MEDIUM] = A_NORMAL | ColorPair(Yellow,Blue),
++      [TEMPERATURE_HOT] = A_BOLD | ColorPair(Red,Blue),
++      [CPUFREQ_LOW] = A_DIM | ColorPair(Green,Blue),
++      [CPUFREQ_MEDIUM] = A_NORMAL | ColorPair(Yellow,Blue),
++      [CPUFREQ_HIGH] = A_BOLD | ColorPair(Red,Blue),
+    },
+    [COLORSCHEME_BLACKNIGHT] = {
+       [RESET_COLOR] = ColorPair(Cyan,Black),
+@@ -527,6 +563,12 @@ int CRT_colorSchemes[LAST_COLORSCHEME][LAST_COLORELEMENT] = {
+       [CPU_SOFTIRQ] = ColorPair(Blue,Black),
+       [CPU_STEAL] = ColorPair(Cyan,Black),
+       [CPU_GUEST] = ColorPair(Cyan,Black),
++      [TEMPERATURE_COOL] = A_DIM | ColorPair(Green,Black),
++      [TEMPERATURE_MEDIUM] = A_NORMAL | ColorPair(Yellow,Black),
++      [TEMPERATURE_HOT] = A_BOLD | ColorPair(Red,Black),
++      [CPUFREQ_LOW] = A_DIM | ColorPair(Green,Black),
++      [CPUFREQ_MEDIUM] = A_NORMAL | ColorPair(Yellow,Black),
++      [CPUFREQ_HIGH] = A_BOLD | ColorPair(Red,Black),
+    },
+    [COLORSCHEME_BROKENGRAY] = { 0 } // dynamically generated.
+ };
+diff --git a/CRT.h b/CRT.h
+index 933fe06..9afc77a 100644
+--- a/CRT.h
++++ b/CRT.h
+@@ -116,6 +116,12 @@ typedef enum ColorElements_ {
+    CPU_SOFTIRQ,
+    CPU_STEAL,
+    CPU_GUEST,
++   TEMPERATURE_COOL,
++   TEMPERATURE_MEDIUM,
++   TEMPERATURE_HOT,
++   CPUFREQ_LOW,
++   CPUFREQ_MEDIUM,
++   CPUFREQ_HIGH,
+    LAST_COLORELEMENT
+ } ColorElements;
+ 
+diff --git a/Makefile.am b/Makefile.am
+index cd5209c..e46160f 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -48,14 +48,17 @@ linux_platform_headers = \
+ 	linux/LinuxProcess.h \
+ 	linux/LinuxProcessList.h \
+ 	linux/LinuxCRT.h \
+-	linux/Battery.h
++	linux/Battery.h \
++	linux/CPUTempMeter.h \
++	linux/CPUFreqMeter.h
+ 
+ all_platform_headers += $(linux_platform_headers)
+ 
+ if HTOP_LINUX
+ AM_CFLAGS += -rdynamic
+ myhtopplatsources = linux/Platform.c linux/IOPriorityPanel.c linux/IOPriority.c \
+-linux/LinuxProcess.c linux/LinuxProcessList.c linux/LinuxCRT.c linux/Battery.c
++linux/LinuxProcess.c linux/LinuxProcessList.c linux/LinuxCRT.c linux/Battery.c \
++linux/CPUTempMeter.c linux/CPUFreqMeter.c
+ 
+ myhtopplatheaders = $(linux_platform_headers)
+ endif
+diff --git a/Settings.c b/Settings.c
+index db2fa06..9cb7dba 100644
+--- a/Settings.c
++++ b/Settings.c
+@@ -105,7 +105,7 @@ static void Settings_readMeterModes(Settings* this, char* line, int column) {
+ }
+ 
+ static void Settings_defaultMeters(Settings* this) {
+-   int sizes[] = { 3, 3 };
++   int sizes[] = { 3, 5 };
+    if (this->cpuCount > 4) {
+       sizes[1]++;
+    }
+@@ -141,6 +141,10 @@ static void Settings_defaultMeters(Settings* this) {
+    this->columns[1].modes[r++] = TEXT_METERMODE;
+    this->columns[1].names[r] = xStrdup("Uptime");
+    this->columns[1].modes[r++] = TEXT_METERMODE;
++   this->columns[1].names[r] = xStrdup("CPUTemp");
++   this->columns[1].modes[r++] = TEXT_METERMODE;
++   this->columns[1].names[r] = xStrdup("CPUFreq");
++   this->columns[1].modes[r++] = TEXT_METERMODE;
+ }
+ 
+ static void readFields(ProcessField* fields, int* flags, const char* line) {
+diff --git a/linux/CPUFreqMeter.c b/linux/CPUFreqMeter.c
+new file mode 100644
+index 0000000..ea4535a
+--- /dev/null
++++ b/linux/CPUFreqMeter.c
+@@ -0,0 +1,106 @@
++/*
++htop - CPUFreqMeter.c
++(C) 2016 Petr Benes
++Released under the GNU GPL, see the COPYING file
++in the source distribution for its full text.
++*/
++
++
++#include "CPUFreqMeter.h"
++
++#include "CRT.h"
++#include "ProcessList.h"
++#include "StringUtils.h"
++
++#define SYS_CPU_DIR "/sys/devices/system/cpu"
++
++/*{
++#include "Meter.h"
++}*/
++
++int CPUFreqMeter_attributes[] = {
++   CPUFREQ_LOW,
++   CPUFREQ_MEDIUM,
++   CPUFREQ_HIGH,
++};
++
++static void CPUFreqMeter_updateValues(Meter* this, char* buffer, int len) {
++   this->values[0] = 0.0;
++
++   // get current frequency
++   {
++      FILE* file;
++      file = fopen(SYS_CPU_DIR "/cpu0/cpufreq/scaling_cur_freq", "r");
++      if (!file)
++        return;
++
++      char *line = NULL;
++      line = String_readLine(file);
++      fclose(file);
++      if (!line)
++        return;
++
++      int cpufreq;
++      cpufreq = strtol(line, NULL, 10);
++      free(line);
++
++      cpufreq /= 1000;
++      this->values[0] = (double)cpufreq;
++   }
++
++   // get max frequency
++   {
++      FILE* file;
++      file = fopen(SYS_CPU_DIR "/cpu0/cpufreq/scaling_max_freq", "r");
++      if (!file)
++        return;
++
++      char *line = NULL;
++      line = String_readLine(file);
++      fclose(file);
++      if (!line)
++        return;
++
++      int cpufreq;
++      cpufreq = strtol(line, NULL, 10);
++      free(line);
++
++      cpufreq /= 1000;
++      this->total = (double)cpufreq;
++   }
++
++   snprintf(buffer, len, "%d/%d", (int)this->values[0], (int)this->total);
++}
++
++static void CPUFreqMeter_display(Object* cast, RichString* out) {
++   Meter* this = (Meter*)cast;
++
++   // choose the color for the frequency
++   int cpufreq = (int)this->values[0];
++   int freqColor;
++   if (cpufreq < 1000)                         freqColor = CRT_colors[CPUFREQ_LOW];
++   else if (cpufreq >= 1000 && cpufreq < 2000) freqColor = CRT_colors[CPUFREQ_MEDIUM];
++   else                                        freqColor = CRT_colors[CPUFREQ_HIGH];
++
++   // output the frequence
++   char buffer[20];
++   sprintf(buffer, "%d", cpufreq);
++   RichString_append(out, freqColor, buffer);
++   RichString_append(out, CRT_colors[METER_TEXT], " MHz");
++}
++
++MeterClass CPUFreqMeter_class = {
++   .super = {
++      .extends = Class(Meter),
++      .display = CPUFreqMeter_display,
++      .delete = Meter_delete,
++   },
++   .updateValues = CPUFreqMeter_updateValues,
++   .defaultMode = TEXT_METERMODE,
++   .maxItems = 1,
++   .total = 0.0,
++   .attributes = CPUFreqMeter_attributes,
++   .name = "CPUFreq",
++   .uiName = "CPU Frequency",
++   .caption = "CPU Freq: "
++};
+diff --git a/linux/CPUFreqMeter.h b/linux/CPUFreqMeter.h
+new file mode 100644
+index 0000000..d280faa
+--- /dev/null
++++ b/linux/CPUFreqMeter.h
+@@ -0,0 +1,18 @@
++/* Do not edit this file. It was automatically generated. */
++
++#ifndef HEADER_CPUFreqMeter
++#define HEADER_CPUFreqMeter
++/*
++htop - CPUFreqMeter.h
++(C) 2016 Petr Benes
++Released under the GNU GPL, see the COPYING file
++in the source distribution for its full text.
++*/
++
++#include "Meter.h"
++
++extern int CPUFreqMeter_attributes[];
++
++extern MeterClass CPUFreqMeter_class;
++
++#endif
+diff --git a/linux/CPUTempMeter.c b/linux/CPUTempMeter.c
+new file mode 100644
+index 0000000..655ea80
+--- /dev/null
++++ b/linux/CPUTempMeter.c
+@@ -0,0 +1,85 @@
++/*
++htop - CPUTempMeter.c
++(C) 2016 Petr Benes
++Released under the GNU GPL, see the COPYING file
++in the source distribution for its full text.
++*/
++
++#include "CPUTempMeter.h"
++
++#include "CRT.h"
++#include "ProcessList.h"
++#include "StringUtils.h"
++
++#include <limits.h>
++
++#define SYS_THERMAL_DIR "/sys/class/thermal"
++
++/*{
++#include "Meter.h"
++}*/
++
++int CPUTempMeter_attributes[] = {
++   TEMPERATURE_COOL,
++   TEMPERATURE_MEDIUM,
++   TEMPERATURE_HOT,
++};
++
++static void CPUTempMeter_updateValues(Meter* this, char* buffer, int len) {
++   this->values[0] = 0.0;
++
++   FILE* file;
++   file = fopen(SYS_THERMAL_DIR "/thermal_zone0/temp", "r");
++   if (!file)
++     return;
++
++   char* line = NULL;
++   line = String_readLine(file);
++   fclose(file);
++   if (!line)
++     return;
++
++   double temperature;
++   temperature = strtod(line, NULL);
++   free(line);
++
++   // some of the systems(e.g Orange Pi) show real temperature in Celcius and therefore we do not need to divide by 1000 
++   if (temperature > 1000.0) temperature /= 1000.0;
++
++   this->values[0] = temperature;
++
++   snprintf(buffer, len, "%d/%d", (int)this->values[0], (int)this->total);
++}
++
++static void CPUTempMeter_display(Object* cast, RichString* out) {
++   Meter* this = (Meter*)cast;
++
++   // choose the color for the temperature
++   double temperature = this->values[0];
++   int tempColor;
++   if      (temperature < 60.0)                        tempColor = CRT_colors[TEMPERATURE_COOL];
++   else if (temperature >= 60.0 && temperature < 80.0) tempColor = CRT_colors[TEMPERATURE_MEDIUM];
++   else                                                tempColor = CRT_colors[TEMPERATURE_HOT];
++
++   // output the temperature
++   char buffer[20];
++   sprintf(buffer, "%.1f", temperature);
++   RichString_append(out, tempColor, buffer);
++   RichString_append(out, CRT_colors[METER_TEXT], "\xc2\xb0" "C");
++}
++
++MeterClass CPUTempMeter_class = {
++   .super = {
++      .extends = Class(Meter),
++      .display = CPUTempMeter_display,
++      .delete = Meter_delete,
++   },
++   .updateValues = CPUTempMeter_updateValues,
++   .defaultMode = TEXT_METERMODE,
++   .maxItems = 1,
++   .total = 100.0,
++   .attributes = CPUTempMeter_attributes,
++   .name = "CPUTemp",
++   .uiName = "CPU Temp",
++   .caption = "CPU Temp: "
++};
+diff --git a/linux/CPUTempMeter.h b/linux/CPUTempMeter.h
+new file mode 100644
+index 0000000..99831aa
+--- /dev/null
++++ b/linux/CPUTempMeter.h
+@@ -0,0 +1,18 @@
++/* Do not edit this file. It was automatically generated. */
++
++#ifndef HEADER_CPUTempMeter
++#define HEADER_CPUTempMeter
++/*
++htop - CPUTempMeter.h
++(C) 2016 Petr Benes
++Released under the GNU GPL, see the COPYING file
++in the source distribution for its full text.
++*/
++
++#include "Meter.h"
++
++extern int CPUTempMeter_attributes[];
++
++extern MeterClass CPUTempMeter_class;
++
++#endif
+diff --git a/linux/Platform.c b/linux/Platform.c
+index ab90ca7..8904202 100644
+--- a/linux/Platform.c
++++ b/linux/Platform.c
+@@ -22,6 +22,8 @@ in the source distribution for its full text.
+ #include "ClockMeter.h"
+ #include "HostnameMeter.h"
+ #include "LinuxProcess.h"
++#include "CPUTempMeter.h"
++#include "CPUFreqMeter.h"
+ 
+ #include <math.h>
+ #include <assert.h>
+@@ -110,6 +112,8 @@ void Platform_setBindings(Htop_Action* keys) {
+ 
+ MeterClass* Platform_meterTypes[] = {
+    &CPUMeter_class,
++   &CPUTempMeter_class,
++   &CPUFreqMeter_class,
+    &ClockMeter_class,
+    &LoadAverageMeter_class,
+    &LoadMeter_class,

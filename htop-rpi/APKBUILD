@@ -1,39 +1,45 @@
+# Contributor: He Yangxuan <yangxuan8282@gmail.com>
 # Contributor: Sören Tempel <soeren+alpine@soeren-tempel.net>
 # Maintainer: Carlo Landmeter <clandmeter@gmail.com>
 pkgname=htop-rpi
-pkgver=2.0.2
-pkgrel=2
-pkgdesc="An interactive process viewer"
-url="https://github.com/wbenny/htop/"
-arch="all"
-license="GPL2"
+_pkgname=htop
+pkgver=2.2.0
+pkgrel=0
+pkgdesc="Interactive process viewer"
+url="http://hisham.hm/htop"
+arch="armhf"
+license="GPL-2.0-or-later"
+provides="htop"
+replaces="htop"
 depends=""
-makedepends="ncurses-dev
-             autoconf
-             automake"
+makedepends="ncurses-dev python3 automake autoconf"
 subpackages="$pkgname-doc"
-source="$url/archive/$pkgver-$pkgrel.tar.gz"
+options="!check" # no upstream/available test-suite
+source="http://hisham.hm/htop/releases/$pkgver/$_pkgname-$pkgver.tar.gz
+	fix-python-path.patch
+	add-rpi-temperature-2.2.0.patch"
 
-_builddir="$srcdir"/htop-$pkgver-$pkgrel
+builddir="$srcdir"/$_pkgname-$pkgver
 build() {
-        cd "$_builddir"
-        ./autogen.sh || return 1
-        ./configure \
-                --build=$CBUILD \
-                --host=$CHOST \
-                --prefix=/usr \
-                --sysconfdir=/etc \
-                --mandir=/usr/share/man \
-                --localstatedir=/var \
-                --enable-cgroups \
-                --enable-taskstats \
-                || return 1
-        make || return 1
+	cd "$builddir"
+	./autogen.sh
+	./configure \
+		--build=$CBUILD \
+		--host=$CHOST \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--mandir=/usr/share/man \
+		--localstatedir=/var \
+		--enable-cgroup \
+		--enable-taskstats
+	make
 }
 
 package() {
-        cd "$_builddir"
-        make DESTDIR="$pkgdir" install || return 1
+	cd "$builddir"
+	make DESTDIR="$pkgdir" install
 }
 
-sha512sums="7053ea2483a3d0ed3a2fb0dc38ff9a94d3729d27be6bfecae8682e116beec7674c8e8cf28946373bffaede3f2422624cddd2432ebda34b00448a27909b709456  2.0.2-2.tar.gz"
+sha512sums="ec1335bf0e3e0387e5e50acbc508d0effad19c4bc1ac312419dc97b82901f4819600d6f87a91668f39d429536d17304d4b14634426a06bec2ecd09df24adc62e  htop-2.2.0.tar.gz
+f2eeafb7207ba14dc7577aa85618adb71fb689a42476d04c99f6be01e8c6ac77cd5ed8ee056b80ddb60c821e1d2c44ebcf4da40960c3b7e8bb3a0d64aad0fd9a  fix-python-path.patch
+3fc1055def9d59e87cd6002297d39226238efca38033482d48e9b63fd8b9525c20e0c73049f80d128535aeb54243cac6f20ae0cdb9156d18f6259253f41234bd  add-rpi-temperature-2.2.0.patch"

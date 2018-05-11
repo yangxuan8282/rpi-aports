@@ -22,7 +22,7 @@ build() {
 }
 
 package() {
-        install -Dm755 fbcp.init ${pkgdir}/etc/init.d/fbcp
+        install -Dm755 "$srcdir"/fbcp.init ${pkgdir}/etc/init.d/fbcp
 
         cd "$srcdir"/$pkgname-master
         install -Dm755 build/fbcp ${pkgdir}/usr/bin/fbcp
