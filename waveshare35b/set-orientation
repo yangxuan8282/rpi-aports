@@ -44,7 +44,7 @@ case $NEW_DEGREE in
 	 90) set_orientation_90;;
 	180) set_orientation_180;;
 	270) set_orientation_270;;
-	  *) die 'Invalid degree, please choose from: 0, 90, 180, 270'
+	  *) die 'Invalid degree, please choose from: 0, 90, 180, 270';;
 esac
 
 cat >&2 <<-EOF
