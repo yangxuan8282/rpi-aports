@@ -1,21 +1,27 @@
 # Maintainer: He Yangxuan <yangxuan8282@gmail.com>
 pkgname=rtl8821au-git
-pkgver=4.3.14
+pkgver=5.1.5
 pkgrel=1
-pkgdesc="Realtek 8812AU USB WiFi driver"
-url="https://github.com/diederikdehaas/rtl8812AU"
+pkgdesc="rtl8821AU, rtl8812AU and rtl8811AU chipset driver with firmware v5.1.5"
+url="https://github.com/zebulon2/rtl8812au"
 arch="armhf"
 license="GPL2"
 makedepends="linux-rpi2-dev"
 install="$pkgname.post-install"
-source="$pkgname-$pkgver.tar.gz::$url/archive/driver-4.3.14.tar.gz
-	$install"
+source="$pkgname-$pkgver.tar.gz::$url/archive/v5.1.5.tar.gz
+	$install
+	add_rpi-support.patch"
 options="!check"
 _kver=4.9.76-0-rpi2
-_builddir=${srcdir}/rtl8812AU-driver-4.3.14
+builddir=${srcdir}/rtl8812au-5.1.5
+
+prepare() {
+	cd $builddir
+	default_prepare
+}
 
 build() {
-	cd $_builddir
+	cd $builddir
 
 	sed -i 's/CONFIG_RTL8812A = y/CONFIG_RTL8812A = n/' Makefile
 	sed -i 's/CONFIG_RTL8821A = n/CONFIG_RTL8821A = y/' Makefile
@@ -27,10 +33,11 @@ build() {
 }
 
 package() {
-	cd $_builddir
+	cd $builddir
 	
-	install -Dm644 8821au.ko "${pkgdir}/lib/modules/${_kver}/kernel/drivers/net/wireless/8821au.ko"
+	install -Dm644 8811au.ko "${pkgdir}/lib/modules/${_kver}/kernel/drivers/net/wireless/8811au.ko"
 }
 
-sha512sums="444cc4f91783e0cbb42ec241f71d3bade4362028e4627d5448e59b8ac622a7f7bb51fe630d258d440b480794a24b1434f23efb32e693e6beaed9f5155c7799eb  rtl8821au-git-4.3.14.tar.gz
-3d0ecfea8348729b0f718a66ffde85783f2e1383fc000059fb4b5ef75d705d99ecf2a2b5a1c4550ef9aa50073b7dac4fe86ac4602ca4bf4430d1dc6d97f22241  rtl8821au-git.post-install"
+sha512sums="ee637b4c1cec43d702d1a5e37142214c400b611ee6c19b62fd05f837f8db810fe1170a783e490e640e9ea046d2153a8ed72710b6af631431484c6279e4808f5b  rtl8821au-git-5.1.5.tar.gz
+ffc46fea90be489d24b98e94840992612bfcf290fa63879c56d2385d9e72e4029108fd959f54c96ba9c173501efe82b1ca2c763b1f363c4e28620f99bc7fcebb  rtl8821au-git.post-install
+adb88ea181be2be10e2c7be33c6e90e9ae7555f930ddfd46d3ded666f1c1e59be1dbfe89b6f416d19d21c7e14b6dce10c5b6fb22ead5eeaff33f9b3b9de624ec  add_rpi-support.patch"
