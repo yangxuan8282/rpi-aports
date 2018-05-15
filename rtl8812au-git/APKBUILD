@@ -7,9 +7,7 @@ url="https://github.com/zebulon2/rtl8812au-driver-5.2.20"
 arch="armhf"
 license="GPL2"
 makedepends="linux-rpi2-dev bc"
-install="$pkgname.post-install"
 source="$pkgname-$pkgver.tar.gz::$url/archive/master.tar.gz
-	$install
 	add_rpi-support.patch"
 options="!check"
 _kver=4.9.76-0-rpi2
@@ -36,5 +34,4 @@ package() {
 }
 
 sha512sums="6966dac1b9e07eee8d56f75dd999c9fb7240f27caee19a626cda8b38b1442947a6317734fb357bb95e56d2cfa8c7bb1441a2cd5662061e99bd8f37124d6e99de  rtl8812au-git-5.2.20.tar.gz
-29cad65c7d50aa36247ef96ee081a419516ce5cb43238568dffd03be663dbd48bcbce7bd1aa3695880cfc5acd0564284ea4a3d1c80bea29e7f5d2ccbfab6e93f  rtl8812au-git.post-install
 4e0bbb9a40a1f70f0038eb498980cfa37e44f2c6cb7f8aa9144dae63d292cfd8cab40023f333b15924d51012992dec72cf1b66afe83233e0f9080ac3136de0a7  add_rpi-support.patch"

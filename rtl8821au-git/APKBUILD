@@ -7,9 +7,7 @@ url="https://github.com/zebulon2/rtl8812au"
 arch="armhf"
 license="GPL2"
 makedepends="linux-rpi2-dev"
-install="$pkgname.post-install"
 source="$pkgname-$pkgver.tar.gz::$url/archive/v5.1.5.tar.gz
-	$install
 	add_rpi-support.patch"
 options="!check"
 _kver=4.9.76-0-rpi2
@@ -39,5 +37,4 @@ package() {
 }
 
 sha512sums="ee637b4c1cec43d702d1a5e37142214c400b611ee6c19b62fd05f837f8db810fe1170a783e490e640e9ea046d2153a8ed72710b6af631431484c6279e4808f5b  rtl8821au-git-5.1.5.tar.gz
-ffc46fea90be489d24b98e94840992612bfcf290fa63879c56d2385d9e72e4029108fd959f54c96ba9c173501efe82b1ca2c763b1f363c4e28620f99bc7fcebb  rtl8821au-git.post-install
 adb88ea181be2be10e2c7be33c6e90e9ae7555f930ddfd46d3ded666f1c1e59be1dbfe89b6f416d19d21c7e14b6dce10c5b6fb22ead5eeaff33f9b3b9de624ec  add_rpi-support.patch"
