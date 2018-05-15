@@ -12,3 +12,10 @@ audio_pwm_mode=2
 
 dtoverlay=waveshare35b
 
+#hdmi_group=2
+#hdmi_mode=1
+#hdmi_mode=87
+#hdmi_cvt 480 320 60 6 0 0 0
+#hdmi_drive=2
+
+#dtoverlay=waveshare35b:speed=41000000,fps=60
