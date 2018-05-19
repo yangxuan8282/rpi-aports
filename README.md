@@ -12,6 +12,8 @@
 
 - libpng12
 
+- bluez-tools
+
 ### kernel
 
 - linux-rpi - alpine raspberry pi kernel with VC4 enabled
@@ -24,6 +26,10 @@
 
 - xf86-video-fbturbo
 
+- rtl8812au-git
+
+- rtl8821au-git
+
 ### framebuffer use
 
 - con2fbmap 
@@ -31,6 +37,8 @@
 - raspi2fb
 
 - rpi-cpfb
+
+- raspi2png
 
 ## note:
 
@@ -52,3 +60,6 @@ SUBSYSTEM=="vchiq|input", MODE="0777"
 KERNEL=="mouse*|mice|event*",  MODE="0777"
 EOF'
 ```
+
+for `dispmanx_vnc`, need to load `uinput` modules, and change permission of `/dev/uinput` to 0666
+to make it run, but it still can't work properly, will got "RFB protocol error: bad xrle data." issues 
