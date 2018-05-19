@@ -1,0 +1,29 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=bluez-tools
+pkgver=0.2.0
+_gitrev=97efd293491ad7ec96a655665339908f2478b3d1
+pkgrel=1
+pkgdesc="A set of tools to manage Bluetooth devices for Linux"
+arch="armhf"
+url="https://github.com/khvzak/bluez-tools"
+license="GPL"
+depends="bluez glib readline"
+makedepends="automake autoconf glib-dev readline-dev"
+source="$pkgname-$_gitrev.tar.gz::https://github.com/khvzak/bluez-tools/archive/$_gitrev.tar.gz"
+subpackages="${pkgname}-doc"
+options="!check"
+builddir="$srcdir"/"$pkgname"-$_gitrev
+
+build() {
+  cd $builddir
+  ./autogen.sh --prefix=/usr --build=$CBUILD --host=$CHOST
+  make
+}
+
+package() {
+  cd $builddir
+  make DESTDIR="$pkgdir" install
+}
+
+sha512sums="ab5dd4a223348aab29fae22f552afae989b74d56c3fa46fd5587c100d63309649a10a87591bc040082545f45b7bb95360fcf6a48812012edbdb93570b0e166f7  bluez-tools-97efd293491ad7ec96a655665339908f2478b3d1.tar.gz"
