@@ -1,0 +1,40 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=pyzy
+pkgver=1.0
+_commit="d7747466562cb8b4bc2934708e29b7643c7bedbc"
+pkgrel=0
+pkgdesc="The Chinese PinYin and Bopomofo conversion library"
+arch="all"
+url="https://github.com/pyzy/pyzy"
+license="LGPL"
+depends="glib sqlite util-linux"
+makedepends="glib-dev sqlite-dev doxygen gnome-common python2 automake autoconf libtool m4 pkgconf"
+source="$pkgname-$pkgver.tar.gz::$url/archive/${_commit}.tar.gz
+        pyzy-0.1.0-fixes-compile.patch"
+options="!check"
+
+builddir="$srcdir"/${pkgname}-${_commit}
+
+prepare() {
+        default_prepare
+}
+
+build() {
+        cd $builddir
+
+        # replace python with python2; see https://github.com/hsumita/libpyzy/issues/1
+        find . -name '*.py' -exec sed -ri '1s#(bin/|env )python#\1python2#' '{}' \;
+
+        ./autogen.sh --prefix=/usr
+        make
+}
+
+package() {
+        cd $builddir
+
+        make DESTDIR="$pkgdir" install
+}
+
+sha512sums="78df83bf66f32e48c68d54225023281fc4298e4ee1ff1475f491aea02a8ba600d923ce2176f2f3fbe5e26f801e545b5d3d983742a42cfcfb6a5c2d6df18556a3  pyzy-1.0.tar.gz
+973f1d9928801e028fe8a212403ec421a0fcbb9874745dd6722b1a769d8c9717d5ae88fb62d3fea6d0fc60c6889f3fa9cf17600d5eafcad8fb6b9f28e2677098  pyzy-0.1.0-fixes-compile.patch"
