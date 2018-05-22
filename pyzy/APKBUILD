@@ -11,7 +11,7 @@ license="LGPL"
 depends="glib sqlite util-linux"
 makedepends="glib-dev sqlite-dev doxygen gnome-common python2 automake autoconf libtool m4 pkgconf"
 source="$pkgname-$pkgver.tar.gz::$url/archive/${_commit}.tar.gz
-        pyzy-0.1.0-fixes-compile.patch"
+        pyzy-0.1.0-fixes-compile.patch::https://github.com/archlinuxarm/PKGBUILDs/raw/009a908c4bae6b95a82baa89d214c5c22730bea4/community/pyzy/pyzy-0.1.0-fixes-compile.patch"
 options="!check"
 
 builddir="$srcdir"/${pkgname}-${_commit}
