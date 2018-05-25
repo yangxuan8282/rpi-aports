@@ -1,10 +1,10 @@
 # Maintainer: Natanael Copa <ncopa@alpinelinux.org>
 
 pkgname=linux-rpi
-pkgver=4.9.76
+pkgver=4.14.39
 case $pkgver in
-*.*.*)	_kernver=${pkgver%.*};;
-*.*)	_kernver=${pkgver};;
+*.*.*)  _kernver=${pkgver%.*};;
+*.*)    _kernver=${pkgver};;
 esac
 pkgrel=0
 pkgdesc="Linux kernel with Raspberry Pi patches"
@@ -14,189 +14,187 @@ makedepends="perl installkernel bash gmp-dev bc"
 options="!strip"
 install=
 # rpi patches are git diff against latest release tag from:
-# linux-4.9.y       https://github.com/raspberrypi/linux/tree/rpi-4.9.y
-source="https://kernel.org/pub/linux/kernel/v4.x/linux-$_kernver.tar.xz
-	https://kernel.org/pub/linux/kernel/v4.x/patch-$pkgver.xz
-	https://dev.alpinelinux.org/archive/rpi-patches/rpi-4.9.63-alpine.patch
-	gpio-mcp23s08-pullups.patch
-	issue-4973.patch
+# linux-4.14.y       https://github.com/raspberrypi/linux/tree/rpi-4.14.y
+source="http://mirrors.ustc.edu.cn/kernel.org/linux/kernel/v4.x/linux-$_kernver.tar.xz
+        https://kernel.org/pub/linux/kernel/v4.x/patch-$pkgver.xz
+        https://github.com/yangxuan8282/tmp-build/raw/master/aports/linux-raspberrypi/rpi-4.14.39-alpine.patch
+        issue-4973.patch
 
-	config-rpi.armhf
-	config-rpi2.armhf
-	markdt
-	"
+        config-rpi.armhf
+        config-rpi2.armhf
+        markdt
+        "
 subpackages=""
 _flavors=
 for _i in $source; do
-	case $_i in
-	config-*.$CARCH)
-		_f=${_i%.$CARCH}
-		_f=${_f#config-}
-		_flavors="$_flavors ${_f}"
-		[ "linux-$_f" != "$pkgname" ] && subpackages="$subpackages linux-${_f}"
-		subpackages="$subpackages linux-${_f}-dev:_dev"
-		;;
-	esac
+        case $_i in
+        config-*.$CARCH)
+                _f=${_i%.$CARCH}
+                _f=${_f#config-}
+                _flavors="$_flavors ${_f}"
+                [ "linux-$_f" != "$pkgname" ] && subpackages="$subpackages linux-${_f}"
+                subpackages="$subpackages linux-${_f}-dev:_dev"
+                ;;
+        esac
 done
 
 arch="armhf"
 license="GPL-2.0"
 
 prepare() {
-	local _patch_failed=
-	cd "$srcdir"/linux-$_kernver
-	if [ "${pkgver%.0}" = "$pkgver" ]; then
-		msg "Applying patch-$pkgver.xz"
-		unxz -c < "$srcdir"/patch-$pkgver.xz | patch -p1 -N || return 1
-	fi
+        local _patch_failed=
+        cd "$srcdir"/linux-$_kernver
+        if [ "${pkgver%.0}" = "$pkgver" ]; then
+                msg "Applying patch-$pkgver.xz"
+                unxz -c < "$srcdir"/patch-$pkgver.xz | patch -p1 -N || return 1
+        fi
 
-	# first apply patches in specified order
-	for i in $source; do
-		case $i in
-		*.patch)
-			msg "Applying $i..."
-			if ! patch -s -p1 -N -i "$srcdir"/${i##*/}; then
-				echo $i >>failed
-				_patch_failed=1
-			fi
-			;;
-		esac
-	done
+        # first apply patches in specified order
+        for i in $source; do
+                case $i in
+                *.patch)
+                        msg "Applying $i..."
+                        if ! patch -s -p1 -N -i "$srcdir"/${i##*/}; then
+                                echo $i >>failed
+                                _patch_failed=1
+                        fi
+                        ;;
+                esac
+        done
 
-	if ! [ -z "$_patch_failed" ]; then
-		error "The following patches failed:"
-		cat failed
-		return 1
-	fi
+        if ! [ -z "$_patch_failed" ]; then
+                error "The following patches failed:"
+                cat failed
+                return 1
+        fi
 
-	# remove localversion from patch if any
-	rm -f localversion*
+        # remove localversion from patch if any
+        rm -f localversion*
 
-	for i in $_flavors; do
-		local _config=config-$i.${CARCH}
-		local _builddir="$srcdir"/build-$i
-		mkdir -p "$_builddir"
-		echo "-$pkgrel-$i" > "$srcdir"/build-$i/localversion-alpine \
-			|| return 1
+        for i in $_flavors; do
+                local _config=config-$i.${CARCH}
+                local _builddir="$srcdir"/build-$i
+                mkdir -p "$_builddir"
+                echo "-$pkgrel-$i" > "$srcdir"/build-$i/localversion-alpine \
+                        || return 1
 
-		cp "$srcdir"/$_config "$_builddir"/.config || return 1
-		make -C "$srcdir"/linux-$_kernver \
-			O="$_builddir" \
-			HOSTCC="${CC:-gcc}" \
-			silentoldconfig || return 1
-	done
+                cp "$srcdir"/$_config "$_builddir"/.config || return 1
+                make -C "$srcdir"/linux-$_kernver \
+                        O="$_builddir" \
+                        HOSTCC="${CC:-gcc}" \
+                        silentoldconfig || return 1
+        done
 }
 
 build() {
-	for i in $_flavors; do
-		cd "$srcdir"/build-$i
-		make CC="${CC:-gcc} -fno-pie" \
-			KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-Alpine" \
-			|| return 1
-	done
+        for i in $_flavors; do
+                cd "$srcdir"/build-$i
+                make CC="${CC:-gcc} -fno-pie" \
+                        KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-Alpine" \
+                        || return 1
+        done
 }
 
 _package() {
-	local _buildflavor="$1" _outdir="$2"
-	local _abi_release=${pkgver}-${pkgrel}-${_buildflavor}
+        local _buildflavor="$1" _outdir="$2"
+        local _abi_release=${pkgver}-${pkgrel}-${_buildflavor}
 
-	cd "$srcdir"/build-$_buildflavor || return 1
+        cd "$srcdir"/build-$_buildflavor || return 1
 
-	mkdir -p "$_outdir"/boot "$_outdir"/lib/modules
+        mkdir -p "$_outdir"/boot "$_outdir"/lib/modules "$_outdir"/lib/firmware
 
-	local _install
-	case "$CARCH" in
-	arm*)
-		_install="zinstall dtbs_install"
-		;;
-	*)
-		_install=install
-		;;
-	esac
+        local _install
+        case "$CARCH" in
+        arm*)
+                _install="zinstall dtbs_install"
+                ;;
+        *)
+                _install=install
+                ;;
+        esac
 
-	cd "$srcdir"/build-$_buildflavor || return 1
-	make -j1 modules_install firmware_install $_install \
-		INSTALL_MOD_PATH="$_outdir" \
-		INSTALL_PATH="$_outdir"/boot \
-		INSTALL_DTBS_PATH="$_outdir"/usr/lib/linux-${_abi_release} \
-		|| return 1
+        cd "$srcdir"/build-$_buildflavor || return 1
+        make -j1 modules_install $_install \
+                INSTALL_MOD_PATH="$_outdir" \
+                INSTALL_PATH="$_outdir"/boot \
+                INSTALL_DTBS_PATH="$_outdir"/usr/lib/linux-${_abi_release} \
+                || return 1
 
-	# tell rpi bootloader we are device tree capable
-	"$srcdir"/markdt "$_outdir"/boot/vmlinuz-$_buildflavor \
-		|| return 1
+        # tell rpi bootloader we are device tree capable
+        "$srcdir"/markdt "$_outdir"/boot/vmlinuz-$_buildflavor \
+                || return 1
 
-	rm -f "$_outdir"/lib/modules/${_abi_release}/build \
-		"$_outdir"/lib/modules/${_abi_release}/source
-	rm -rf "$_outdir"/lib/firmware
+        rm -f "$_outdir"/lib/modules/${_abi_release}/build \
+                "$_outdir"/lib/modules/${_abi_release}/source
+        rm -rf "$_outdir"/lib/firmware
 
-	install -D include/config/kernel.release \
-		"$_outdir"/usr/share/kernel/$_buildflavor/kernel.release
+        install -D include/config/kernel.release \
+                "$_outdir"/usr/share/kernel/$_buildflavor/kernel.release
 }
 
 # main flavor installs in $pkgdir
 package() {
-	_package rpi "$pkgdir"
+        _package rpi "$pkgdir"
 }
 
 # subflavors install in $subpkgdir
 rpi2() {
-	_package rpi2 "$subpkgdir"
+        _package rpi2 "$subpkgdir"
 }
 
 _dev() {
-	local _flavor=$(echo $subpkgname | sed -E 's/(^linux-|-dev$)//g')
-	local _abi_release=${pkgver}-${pkgrel}-$_flavor
-	# copy the only the parts that we really need for build 3rd party
-	# kernel modules and install those as /usr/src/linux-headers,
-	# simlar to what ubuntu does
-	#
-	# this way you dont need to install the 300-400 kernel sources to
-	# build a tiny kernel module
-	#
-	pkgdesc="Headers and script for third party modules for $_flavor kernel"
-	depends="gmp-dev bash"
-	local dir="$subpkgdir"/usr/src/linux-headers-${_abi_release}
+        local _flavor=$(echo $subpkgname | sed -E 's/(^linux-|-dev$)//g')
+        local _abi_release=${pkgver}-${pkgrel}-$_flavor
+        # copy the only the parts that we really need for build 3rd party
+        # kernel modules and install those as /usr/src/linux-headers,
+        # simlar to what ubuntu does
+        #
+        # this way you dont need to install the 300-400 kernel sources to
+        # build a tiny kernel module
+        #
+        pkgdesc="Headers and script for third party modules for $_flavor kernel"
+        depends="gmp-dev bash"
+        local dir="$subpkgdir"/usr/src/linux-headers-${_abi_release}
 
-	# first we import config, run prepare to set up for building
-	# external modules, and create the scripts
-	mkdir -p "$dir"
-	cp "$srcdir"/config-$_flavor.${CARCH} "$dir"/.config
-	make -j1 -C "$srcdir"/linux-$_kernver O="$dir" HOSTCC="${CC:-gcc}" \
-		silentoldconfig prepare modules_prepare scripts
+        # first we import config, run prepare to set up for building
+        # external modules, and create the scripts
+        mkdir -p "$dir"
+        cp "$srcdir"/config-$_flavor.${CARCH} "$dir"/.config
+        make -j1 -C "$srcdir"/linux-$_kernver O="$dir" HOSTCC="${CC:-gcc}" \
+                silentoldconfig prepare modules_prepare scripts
 
-	# remove the stuff that points to real sources. we want 3rd party
-	# modules to believe this is the soruces
-	rm "$dir"/Makefile "$dir"/source
+        # remove the stuff that points to real sources. we want 3rd party
+        # modules to believe this is the soruces
+        rm "$dir"/Makefile "$dir"/source
 
-	# copy the needed stuff from real sources
-	#
-	# this is taken from ubuntu kernel build script
-	# http://kernel.ubuntu.com/git/ubuntu/ubuntu-zesty.git/tree/debian/rules.d/3-binary-indep.mk
-	cd "$srcdir"/linux-$_kernver
-	find .  -path './include/*' -prune \
-		-o -path './scripts/*' -prune -o -type f \
-		\( -name 'Makefile*' -o -name 'Kconfig*' -o -name 'Kbuild*' -o \
-		   -name '*.sh' -o -name '*.pl' -o -name '*.lds' \) \
-		-print | cpio -pdm "$dir" || return 1
+        # copy the needed stuff from real sources
+        #
+        # this is taken from ubuntu kernel build script
+        # http://kernel.ubuntu.com/git/ubuntu/ubuntu-zesty.git/tree/debian/rules.d/3-binary-indep.mk
+        cd "$srcdir"/linux-$_kernver
+        find .  -path './include/*' -prune \
+                -o -path './scripts/*' -prune -o -type f \
+                \( -name 'Makefile*' -o -name 'Kconfig*' -o -name 'Kbuild*' -o \
+                   -name '*.sh' -o -name '*.pl' -o -name '*.lds' \) \
+                -print | cpio -pdm "$dir" || return 1
 
-	cp -a scripts include "$dir" || return 1
-	find $(find arch -name include -type d -print) -type f \
-		| cpio -pdm "$dir"
+        cp -a scripts include "$dir" || return 1
+        find $(find arch -name include -type d -print) -type f \
+                | cpio -pdm "$dir"
 
-	install -Dm644 "$srcdir"/build-$_flavor/Module.symvers \
-		"$dir"/Module.symvers
+        install -Dm644 "$srcdir"/build-$_flavor/Module.symvers \
+                "$dir"/Module.symvers
 
-	mkdir -p "$subpkgdir"/lib/modules/${_abi_release}
-	ln -sf /usr/src/linux-headers-${_abi_release} \
-		"$subpkgdir"/lib/modules/${_abi_release}/build
+        mkdir -p "$subpkgdir"/lib/modules/${_abi_release}
+        ln -sf /usr/src/linux-headers-${_abi_release} \
+                "$subpkgdir"/lib/modules/${_abi_release}/build
 }
 
 
-sha512sums="bf67ff812cc3cb7e5059e82cc5db0d9a7c5637f7ed9a42e4730c715bf7047c81ed3a571225f92a33ef0b6d65f35595bc32d773356646df2627da55e9bc7f1f1a  linux-4.9.tar.xz
-57d98aa04f01a7ff550885b42cbd115b81234994005378bace5d984dfec232039934c64bff14fd88a5ba962c6dacf5b408173cccf551eb1195f0be980bb41090  patch-4.9.76.xz
-31c665e1ce6f78f2322891e13db1b3712884082dedf5bdf056b83b7207feaecde5bdf5ffda145275e10c17e1e221be78aed8d50a7cf581378537f7e7346de3cd  rpi-4.9.63-alpine.patch
-36724ba56cb8fdf3a3d347cffb67ae1cc3d7b1052d526b6b5134ebf6baae9f9724b586c97833453dc7697ab24699426f0749af78b6a80be36967a80033a0cf40  gpio-mcp23s08-pullups.patch
+sha512sums="77e43a02d766c3d73b7e25c4aafb2e931d6b16e870510c22cef0cdb05c3acb7952b8908ebad12b10ef982c6efbe286364b1544586e715cf38390e483927904d8  linux-4.14.tar.xz
+28568e50fc70016426b65706f3de12cd723d7e5d5d88a23bbb02915b221db904744108328c3a63bb3f620e059f116930bb0b2d16271b53ed70dc320f6f3daf69  patch-4.14.39.xz
+235eee2e144f1a3ac798be45f23070b02a9fbd9d62d533e8e0ba7cb741e2236982c3d8406540b34a303ff983c1bf5d4e8649429c6bf81fe814d5a77c35545f10  rpi-4.14.39-alpine.patch
 501c91bf2538a18102da59bbccc3097f9c3c90079acc0e946ff075074160c09b8a66934e5ce5470e170f0e4f93d114709a95230367426d0bb7ea02c4bdf4cc9b  issue-4973.patch
-6aaf0e99762b7a7ba5b269f3cbd0468bd5cb0fbd2217e24f0568692e185588416756c5fcb9b04ded03882d1852215a0d9f0f014e4b1b497882fe2a429b7a4b07  config-rpi.armhf
-327ef350ab63aea3451d50809a67d9c5d6b325f0d9dd323b96ff8866c86f15835bf3490d471e2e997b09eaf5a401a040054d0c412d045ac5c26d675ef4429001  config-rpi2.armhf
+0ab9bf11730ec4c50f2fdd53002b41279fab16c5abf87c9ebc4f4fe6379d1af604328258fd67a5175ebe2b291852d87b79afb4674f1adea786f70c2c17b08c59  config-rpi.armhf
+70f31add086e8c0c543e6a2f1899df90d626850229eb7c59b1042cf9e62e62d1937e39cf8fb0c804fc6420464ce022134f106b639fb78ad3f112b57589da37fc  config-rpi2.armhf
 a8e7f434c325c9dd7a9109efecad408e42a50ecd1391cb0c7d1d7de79609caee007486c8a6538231c74bdc5d7b84cbca053958e1b239bc0507e6d3598ace383a  markdt"
