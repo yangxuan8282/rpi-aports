@@ -15,9 +15,9 @@ options="!strip"
 install=
 # rpi patches are git diff against latest release tag from:
 # linux-4.14.y       https://github.com/raspberrypi/linux/tree/rpi-4.14.y
-source="http://mirrors.ustc.edu.cn/kernel.org/linux/kernel/v4.x/linux-$_kernver.tar.xz
+source="https://kernel.org/pub/linux/kernel/v4.x/linux-$_kernver.tar.xz
         https://kernel.org/pub/linux/kernel/v4.x/patch-$pkgver.xz
-        https://github.com/yangxuan8282/tmp-build/raw/master/aports/linux-raspberrypi/rpi-4.14.39-alpine.patch
+        https://raw.githubusercontent.com/yangxuan8282/rpi-aports/master/linux-rpi/rpi-4.14.39-alpine.patch
         issue-4973.patch
 
         config-rpi.armhf
