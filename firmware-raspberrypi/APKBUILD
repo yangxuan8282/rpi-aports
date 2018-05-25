@@ -1,0 +1,31 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=firmware-raspberrypi
+pkgver=20180312
+_commit=e18f47df5728a89a424df0e00d113decd64ae526
+pkgrel=1
+pkgdesc="Additional firmware for Raspberry Pi"
+arch="armhf"
+url="https://github.com/RPi-Distro/firmware-nonfree"
+license="custom"
+options="!strip !check" 
+source="$url/raw/$_commit/brcm/brcmfmac43430-sdio.bin
+	$url/raw/$_commit/brcm/brcmfmac43430-sdio.txt
+	$url/raw/$_commit/brcm/brcmfmac43455-sdio.bin
+	$url/raw/$_commit/brcm/brcmfmac43455-sdio.clm_blob
+	$url/raw/$_commit/brcm/brcmfmac43455-sdio.txt
+	$url/raw/$_commit/LICENCE.broadcom_bcm43xx"
+
+package() {
+	install -d "${pkgdir}/lib/firmware/brcm"
+	cd $srcdir
+	install -m 0644 *.bin *.txt *.clm_blob "${pkgdir}/lib/firmware/brcm"
+	install -Dm644 LICENCE.broadcom_bcm43xx "$pkgdir"/usr/share/licenses/$pkgname/LICENCE.broadcom_bcm43xx
+}
+
+sha512sums="22e9f709cdc2cffb1c98fa7b11dd026a5123749051a7bcd31c06d217c0fa83d783a8fb1021cf19744897570a52e6c255ceaee88f6413d02a2ddabafa0e772e97  brcmfmac43430-sdio.bin
+d3c9ae08bbb2323b4737d65a0416702c92eb52f9c395c8da6be00eb2f1d68efcb2dcb88e357adaf2130dafab32378b13d0a56c37bb647af145e5029e23744e08  brcmfmac43430-sdio.txt
+7d3cf1a98c150aee10290edfd9bfb1fc30a7aa2ae23cd7b7f56822758334995bf24a9a0d81ef00fe5670c69940b82def890f404d93d8dc4c330ee21e90dba1fb  brcmfmac43455-sdio.bin
+a32cd00a1b3f6d10d3bc6fa15e6c5ae167e90514e9f9436bd3796f9c7df6135cbaa580c56ad236982ff0ca815e6c04b12495ba370308049c98dfbba808985862  brcmfmac43455-sdio.clm_blob
+901d839f6cb14512902584d75e5c6c1738cb7712ce701d1b57264d64dd084080a293c7326fa347c544b571ea0f8113304ebe048ec907546f07fe42891f357c47  brcmfmac43455-sdio.txt
+bc2975793764bbd287f9f207d5b5abf49606dc65cfdebf1783e1e660f9872b409c4ab98287da9a3926aea657e00439f3f946d253e1cf7666a3a7e527543dc1a6  LICENCE.broadcom_bcm43xx"
