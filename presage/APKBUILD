@@ -1,0 +1,33 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname="presage"
+pkgver=0.9.1
+pkgrel=1
+pkgdesc="Presage is an intelligent predictive text entry platform."
+arch="all"
+license="GPL"
+url="http://presage.sourceforge.net"
+depends="sqlite-libs libgcc libstdc++"
+makedepends="automake autoconf make libtool sqlite-dev"
+source="http://downloads.sourceforge.net/$pkgname/$pkgname-$pkgver.tar.gz"
+options="!check"
+
+builddir=$srcdir/$pkgname-$pkgver
+
+build() {
+	cd $builddir
+    
+	autoreconf -fvi
+	autoconf
+    
+	./configure --prefix=/usr
+	make
+}
+
+package() {
+	cd $builddir
+	make DESTDIR="$pkgdir" install
+}
+
+
+sha512sums="46d7151a80e376d9a8a018be985b2c88a070a6f6555bf3d9b1f50aa41ea8e861c8e26ed3c25a5833855ae01004ecbd36408711e40baf4f072599c240f6c721b1  presage-0.9.1.tar.gz"

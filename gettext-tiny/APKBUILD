@@ -1,0 +1,27 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=gettext-tiny
+pkgver=0.2.0
+pkgrel=1
+pkgdesc="lightweight replacements of the gnu gettext suite"
+url="https://github.com/sabotage-linux/gettext-tiny"
+arch="all"
+license="MIT"
+depends=""
+makedepends=""
+source="$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz"
+options="!check"
+
+builddir=$srcdir/$pkgname-$pkgver
+
+build() {
+	cd $builddir
+	make LIBINTL=MUSL
+}
+
+package() {
+	cd $builddir
+	make DESTDIR=$pkgdir prefix=/ install
+}
+
+sha512sums="55ec4296b03b379c305de39b98eaced4067c67a2da7ddd91d2cdb2f6d8fe133a90d41bb8a30d80aebc1ac0e8add6f7c62082712a952f3e925946c6338b6a5508  gettext-tiny-0.2.0.tar.gz"
