@@ -1,0 +1,23 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=nuitka
+pkgver=0.5.30
+pkgrel=1
+pkgdesc='Python to native compiler'
+arch="all"
+url="https://nuitka.net"
+license="APACHE"
+depends="python3"
+makedepends="py3-setuptools"
+source="https://nuitka.net/releases/Nuitka-$pkgver.tar.gz"
+options="!check"
+
+builddir=$srcdir/Nuitka-$pkgver
+
+package() {
+	cd $builddir
+
+	python3 setup.py install --root="$pkgdir" --optimize=1
+}
+
+sha512sums="2129c1cdb320623bc41bae7c874ca6dc591068c956b9d42ea4baab10733a08b8619094531ba495e741a0d109140443618d981adc74609b71d21936bc45bb5da8  Nuitka-0.5.30.tar.gz"
