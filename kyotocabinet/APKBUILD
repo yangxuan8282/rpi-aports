@@ -1,0 +1,33 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=kyotocabinet
+pkgver=1.2.76
+pkgrel=1
+pkgdesc="a modern implementation of DBM in C++"
+arch="all"
+url="http://fallabs.com/kyotocabinet"
+license="LGPL3"
+subpackages="$pkgname-doc"
+depends="zlib libgcc libstdc++"
+makedepends="zlib-dev"
+source="http://fallabs.com/${pkgname}/pkg/${pkgname}-${pkgver}.tar.gz
+	kyotocabinet-1.2.76-gcc6.patch::https://src.fedoraproject.org/cgit/rpms/kyotocabinet.git/plain/kyotocabinet-1.2.76-gcc6.patch"
+options="!check"
+
+builddir=$srcdir/$pkgname-$pkgver
+
+build() {
+  cd $builddir
+
+  ./configure --prefix=/usr --disable-opt
+  make
+}
+
+package() {
+  cd $builddir
+
+  make install DESTDIR="$pkgdir/"
+}
+
+sha512sums="278db7b327eb4c21bf0137d9aa14fb67d74d5ce7ed1cb29fc9120d157a60de165ec0cf842903eb7952e8f998045ae585b958977fa973ba0e0773381de71d9f6a  kyotocabinet-1.2.76.tar.gz
+68b77f53a58d0a22d374965a37fe7e12992bac3f2843e2a2344db7c41a3ad8ff4d3673e2c7585c48e98876b75ce292054c6db6ca8bcf51cf55076407580b6258  kyotocabinet-1.2.76-gcc6.patch"
