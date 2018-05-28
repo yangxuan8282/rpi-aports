@@ -1,0 +1,28 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=ibus-libpinyin
+pkgver=1.10.0
+pkgrel=1
+pkgdesc="Intelligent Pinyin engine based on libpinyin for IBus"
+arch="all"
+license="LGPL"
+url="https://github.com/libpinyin/ibus-libpinyin"
+depends="ibus libpinyin py-xdg glib"
+makedepends="intltool gnome-common autoconf automake libtool sqlite sqlite-dev ibus-dev"
+source="$pkgname-$pkgver.tar.gz::https://github.com/libpinyin/ibus-libpinyin/archive/$pkgver.tar.gz"
+options="!check"
+
+builddir=$srcdir/$pkgname-$pkgver
+
+build() {
+	cd $builddir
+	./autogen.sh --prefix=/usr --libexecdir=/usr/lib/$pkgname --disable-ibus
+	make
+}
+
+package() {
+	cd $builddir
+	make NO_INDEX=true DESTDIR="$pkgdir" install
+}
+
+sha512sums="c9fdc28562714bddc889805e1d439a7dd425f721a8236b8f8ec4727ce24e5053693b3e5bd9b06ced22ceb66bc7621715f7ee52e00af3b8b113503a5ce6963ca0  ibus-libpinyin-1.10.0.tar.gz"
