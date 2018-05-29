@@ -1,0 +1,38 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=florence
+pkgver=0.6.3
+pkgrel=1
+pkgdesc="A configurable on-screen virtual keyboard"
+arch="all"
+url="http://sourceforge.net/projects/${pkgname}/"
+license="GPL"
+subpackages="$pkgname-doc"
+depends="gtk+3.0 libxml2 librsvg libxtst gettext gstreamer"
+makedepends="intltool gnome-doc-utils glib glib-dev rarian-dev libxext-dev cairo-dev librsvg-dev
+        libxml2-dev gstreamer-dev gtk+3.0-dev"
+source="http://sourceforge.net/projects/${pkgname}/files/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.bz2"
+options="!check"
+
+builddir=$srcdir/$pkgname-$pkgver
+
+build() {
+        cd $builddir
+
+        ./configure --prefix=/usr \
+                --without-notification \
+                --without-at-spi \
+                --with-panelapplet \
+                --with-xtst \
+                --with-docs \
+                --disable-static
+        make -j1
+}
+
+package() {
+        cd $builddir
+
+        make -j1 DESTDIR="${pkgdir}" install
+}
+
+sha512sums="c527e8c40c9a594106420a6187945d79dfa7ddb4f628805cd188c8a37f79f42cbc1f74b80e21186f104a79c4d5e90c7a9d93cbe35bf1c6ebfe874db047fbef3c  florence-0.6.3.tar.bz2"
