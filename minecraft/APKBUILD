@@ -1,0 +1,36 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=minecraft
+pkgver=99
+pkgrel=1
+pkgdesc="An open-world game whose gameplay revolves around breaking and placing blocks"
+arch="all"
+license="custom"
+url="http://www.minecraft.net/"
+depends="openjdk8-jre xrandr ttf-droid libxtst"
+source="http://s3.amazonaws.com/Minecraft.Download/launcher/Minecraft.jar
+		minecraft 
+		minecraft.desktop 
+		minecraft.png 
+		LICENSE"
+options="!check"
+
+package() {
+
+	install -D -m755 "${srcdir}/minecraft"		   "${pkgdir}/usr/bin/minecraft"
+	install -D -m644 "${srcdir}/Minecraft.jar"	   "${pkgdir}/usr/share/minecraft/Minecraft.jar"
+
+	# Desktop launcher with icon
+	install -D -m644 "${srcdir}/minecraft.desktop" "${pkgdir}/usr/share/applications/minecraft.desktop"
+	install -D -m644 "${srcdir}/minecraft.png"	   "${pkgdir}/usr/share/pixmaps/minecraft.png"
+
+	# License
+	install -D -m644 "${srcdir}/LICENSE"		   "${pkgdir}/usr/share/licenses/minecraft/LICENSE"
+}
+
+# vim:set ts=4 sw=4 et:
+sha512sums="64201f5d9522c43bded397e39b29eedeed5af224a064e13eede6f5d276d7b61702c5daae998c1fff8b34c6660f8f56a40bf0f43f4024119023c77672d6319659  Minecraft.jar
+f561cd162beb0388184d0e892ffc86c0781dd6b669263fe34d05c73057bb0bf1aaef4d93faa291c4a0458df3247b97c0485f833a06d6d816a3df08533ac32b0e  minecraft
+2164e6505a3cd5e896c90d1a1a4634a09d0930dfbbf67ec0b2c02c6c477969a538bd7a0b6b7f6890ec8ed1d72709f29046afc829e2739087a8ae4a6608cdeec1  minecraft.desktop
+b0fa9305ee35fa050471e80c20b61086e7cc11eecd7b86c4b091bce7b96090e058520c00ce5a782aacddedf25f441764b0074889bb60452ea992262b1eae1727  minecraft.png
+06d822c37a7e18784bf0afc4ab3f17451325516719e11ecb9f87f2f4d0d0bb418a5fb376485a07e22896178d10ca9ae83c87745f9e5e2c61ec96b5234792a3fb  LICENSE"
