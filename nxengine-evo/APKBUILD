@@ -1,0 +1,56 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=nxengine-evo
+pkgver=2.6.3
+pkgrel=1
+pkgdesc="A somewhat upgraded/refactored version of nxengine"
+arch="all"
+url="https://github.com/nxengine/nxengine-evo"
+license="GPL3"
+depends="sdl2_ttf sdl2_mixer"
+makedepends="cmake sdl2-dev sdl2_ttf-dev libpng-dev sdl2_mixer-dev"
+source="$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz
+        http://www.cavestory.org/downloads/cavestoryen.zip
+        nxengine.desktop
+        run-nx
+        nxengine.png
+        0001-fix-chars-for-armv7.patch"
+options="!check"
+
+builddir=$srcdir/$pkgname-$pkgver
+
+build() {
+        cd $builddir
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        make
+}
+
+package() {
+
+        # launcher
+        install -Dm755 $srcdir/run-nx "$pkgdir"/usr/bin/run-nx
+
+        # desktop entry
+        install -Dm644 $srcdir/nxengine.desktop "$pkgdir"/usr/share/applications/nxengine.desktop
+        install -Dm644 $srcdir/nxengine.png "$pkgdir"/usr/share/pixmaps/nxengine.png
+
+        cd $builddir
+
+        # extract data
+        cp -r data/ $srcdir/CaveStory/
+        cd $srcdir/CaveStory
+        $builddir/bin/extract
+
+        mkdir -p "$pkgdir"/usr/share
+        cp -r $srcdir/CaveStory/ "$pkgdir"/usr/share/nxengine
+        install -Dm755 $builddir/bin/nx "$pkgdir"/usr/bin/nx
+}
+
+sha512sums="22ddc1201919d5192ac906f6ae9ebcecab38384b84c7f0ad636d4913bf9473fdcebeb30a32e6392c5edb6381fdc9703b8c3344cc5ef9ddd0ab3a12cd668e7c53  nxengine-evo-2.6.3.tar.gz
+9c7c2c6c8114974df14b1dce379b86da48caf299716e1de3d743e47c3ac6a8c13c4a0ada85778e69f11c2428f991dcbfcb0020212279f9c1787260102988cbc3  cavestoryen.zip
+de52b5731e71b3e8081a93e835a71c29dc4cfddebe564d927aeac0e7f09af69f668c93ea072fcf37a5392749645c7ff779360ac6af909138c425fa708bc8990f  nxengine.desktop
+27767baf1c82ee973f057f1edffa9036dff9f81cd42b95e195c672b9030b46398bacd4dc0bb6440c02a00664b5c34ee19c9f491c328859d03aa64ff27101d33b  run-nx
+b683e7eb9facd6b6217be5b0bd2588d5be54bb36d9ed82b51625a0b664e76342c18d00df4f9417faabe508190114ce29d4612c89a9ce9be05f6878cc9ce744dc  nxengine.png
+6b0782bfe5ddb98be29b61bcdedc937e721093e90d283cc4c7e76b7ee5a523cbee039686f3e012d1c97bdd5072c9f2c399ecaf851edf6f2aa00ed7a2b203b7f9  0001-fix-chars-for-armv7.patch"
