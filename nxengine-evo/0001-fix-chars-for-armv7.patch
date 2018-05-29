@@ -1,0 +1,25 @@
+From 21619ef65e5ce1effa829649deadcb416ffdf984 Mon Sep 17 00:00:00 2001
+From: He Yangxuan <yangxuan8282@gmail.com>
+Date: Tue, 29 May 2018 06:50:54 +0000
+Subject: [PATCH] fix for armv7, same as this issues: https://github.com/ckolivas/lrzip/issues/46
+
+---
+ src/player.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/player.cpp b/src/player.cpp
+index ab3e638..b3b4c99 100644
+--- a/src/player.cpp
++++ b/src/player.cpp
+@@ -760,7 +760,7 @@ int i, key;
+ 	{
+ 		// keys which deactivate lookaway when you are facing away from player
+ 		static const char actionkeys[] = \
+-			{ LEFTKEY, RIGHTKEY, UPKEY, JUMPKEY, FIREKEY, -1 };
++			{ LEFTKEY, RIGHTKEY, UPKEY, JUMPKEY, FIREKEY, (char)-1 };
+ 		
+ 		// stop looking away if any keys are pushed
+ 		for(i=0;;i++)
+-- 
+2.11.0
+

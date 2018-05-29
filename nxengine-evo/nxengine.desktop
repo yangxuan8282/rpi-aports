@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=NXEngine-evo
+Comment=A somewhat upgraded/refactored version of nxengine
+Exec=/usr/bin/run-nx
+Icon=nxengine
+Terminal=false
+Categories=Game;AdventureGame;

@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# launcher for nxengine by carstene1ns 2014
+#
+
+# create jail folder
+mkdir -p "$HOME"/.nxengine
+
+# link data, if needed
+if [ ! -L "$HOME"/.nxengine/data ]; then
+        for i in Doukutsu.exe data; do
+                ln -s -t "$HOME"/.nxengine /usr/share/nxengine/$i
+        done
+        ln -s -t "$HOME"/.nxengine /usr/bin/nx
+fi
+
+# change to game dir and launch
+cd "$HOME"/.nxengine && exec ./nx "$@"
