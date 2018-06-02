@@ -2,9 +2,9 @@
 # Maintainer: Natanael Copa <ncopa@alpinelinux.org>
 
 pkgname=linux-rpi
-pkgver=4.14.43
-_commit=a2092141807514666a273971cc8fa9e80f14439f
-pkgrel=1
+pkgver=4.14.44
+_commit=e3e047e02089bf95d28e1c8e2477e22752bed52e
+pkgrel=0
 pkgdesc="Linux kernel with Raspberry Pi patches"
 url=https://github.com/raspberrypi/linux
 depends="mkinitfs linux-firmware"
@@ -13,177 +13,177 @@ options="!strip"
 install=
 # directly use downstream as source, instead of alpine upstream diff then patch way
 source="https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz
-        issue-4973.patch
+	issue-4973.patch
 
-        config-rpi.armhf
-        config-rpi2.armhf
-        markdt
-        "
+	config-rpi.armhf
+	config-rpi2.armhf
+	markdt
+	"
 subpackages=""
 _flavors=
 for _i in $source; do
-        case $_i in
-        config-*.$CARCH)
-                _f=${_i%.$CARCH}
-                _f=${_f#config-}
-                _flavors="$_flavors ${_f}"
-                [ "linux-$_f" != "$pkgname" ] && subpackages="$subpackages linux-${_f}"
-                subpackages="$subpackages linux-${_f}-dev:_dev"
-                ;;
-        esac
+	case $_i in
+	config-*.$CARCH)
+		_f=${_i%.$CARCH}
+		_f=${_f#config-}
+		_flavors="$_flavors ${_f}"
+		[ "linux-$_f" != "$pkgname" ] && subpackages="$subpackages linux-${_f}"
+		subpackages="$subpackages linux-${_f}-dev:_dev"
+		;;
+	esac
 done
 
 arch="armhf"
 license="GPL-2.0"
 
 prepare() {
-        local _patch_failed=
-        cd "$srcdir"/linux-$_commit
+	local _patch_failed=
+	cd "$srcdir"/linux-$_commit
 
-        # first apply patches in specified order
-        for i in $source; do
-                case $i in
-                *.patch)
-                        msg "Applying $i..."
-                        if ! patch -s -p1 -N -i "$srcdir"/${i##*/}; then
-                                echo $i >>failed
-                                _patch_failed=1
-                        fi
-                        ;;
-                esac
-        done
+	# first apply patches in specified order
+	for i in $source; do
+		case $i in
+		*.patch)
+			msg "Applying $i..."
+			if ! patch -s -p1 -N -i "$srcdir"/${i##*/}; then
+				echo $i >>failed
+				_patch_failed=1
+			fi
+			;;
+		esac
+	done
 
-        if ! [ -z "$_patch_failed" ]; then
-                error "The following patches failed:"
-                cat failed
-                return 1
-        fi
+	if ! [ -z "$_patch_failed" ]; then
+		error "The following patches failed:"
+		cat failed
+		return 1
+	fi
 
-        # remove localversion from patch if any
-        rm -f localversion*
+	# remove localversion from patch if any
+	rm -f localversion*
 
-        for i in $_flavors; do
-                local _config=config-$i.${CARCH}
-                local _builddir="$srcdir"/build-$i
-                mkdir -p "$_builddir"
-                echo "-$pkgrel-$i" > "$srcdir"/build-$i/localversion-alpine \
-                        || return 1
+	for i in $_flavors; do
+		local _config=config-$i.${CARCH}
+		local _builddir="$srcdir"/build-$i
+		mkdir -p "$_builddir"
+		echo "-$pkgrel-$i" > "$srcdir"/build-$i/localversion-alpine \
+			|| return 1
 
-                cp "$srcdir"/$_config "$_builddir"/.config || return 1
-                make -C "$srcdir"/linux-$_commit \
-                        O="$_builddir" \
-                        HOSTCC="${CC:-gcc}" \
-                        silentoldconfig || return 1
-        done
+		cp "$srcdir"/$_config "$_builddir"/.config || return 1
+		make -C "$srcdir"/linux-$_commit \
+			O="$_builddir" \
+			HOSTCC="${CC:-gcc}" \
+			silentoldconfig || return 1
+	done
 }
 
 build() {
-        for i in $_flavors; do
-                cd "$srcdir"/build-$i
-                make CC="${CC:-gcc} -fno-pie" \
-                        KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-Alpine" \
-                        || return 1
-        done
+	for i in $_flavors; do
+		cd "$srcdir"/build-$i
+		make CC="${CC:-gcc} -fno-pie" \
+			KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-Alpine" \
+			|| return 1
+	done
 }
 
 _package() {
-        local _buildflavor="$1" _outdir="$2"
-        local _abi_release=${pkgver}-${pkgrel}-${_buildflavor}
+	local _buildflavor="$1" _outdir="$2"
+	local _abi_release=${pkgver}-${pkgrel}-${_buildflavor}
 
-        cd "$srcdir"/build-$_buildflavor || return 1
+	cd "$srcdir"/build-$_buildflavor || return 1
 
-        mkdir -p "$_outdir"/boot "$_outdir"/lib/modules "$_outdir"/lib/firmware
+	mkdir -p "$_outdir"/boot "$_outdir"/lib/modules "$_outdir"/lib/firmware
 
-        local _install
-        case "$CARCH" in
-        arm*)
-                _install="zinstall dtbs_install"
-                ;;
-        *)
-                _install=install
-                ;;
-        esac
+	local _install
+	case "$CARCH" in
+	arm*)
+		_install="zinstall dtbs_install"
+		;;
+	*)
+		_install=install
+		;;
+	esac
 
-        cd "$srcdir"/build-$_buildflavor || return 1
-        make -j1 modules_install $_install \
-                INSTALL_MOD_PATH="$_outdir" \
-                INSTALL_PATH="$_outdir"/boot \
-                INSTALL_DTBS_PATH="$_outdir"/usr/lib/linux-${_abi_release} \
-                || return 1
+	cd "$srcdir"/build-$_buildflavor || return 1
+	make -j1 modules_install $_install \
+		INSTALL_MOD_PATH="$_outdir" \
+		INSTALL_PATH="$_outdir"/boot \
+		INSTALL_DTBS_PATH="$_outdir"/usr/lib/linux-${_abi_release} \
+		|| return 1
 
-        # tell rpi bootloader we are device tree capable
-        "$srcdir"/markdt "$_outdir"/boot/vmlinuz-$_buildflavor \
-                || return 1
+	# tell rpi bootloader we are device tree capable
+	"$srcdir"/markdt "$_outdir"/boot/vmlinuz-$_buildflavor \
+		|| return 1
 
-        rm -f "$_outdir"/lib/modules/${_abi_release}/build \
-                "$_outdir"/lib/modules/${_abi_release}/source
-        rm -rf "$_outdir"/lib/firmware
+	rm -f "$_outdir"/lib/modules/${_abi_release}/build \
+		"$_outdir"/lib/modules/${_abi_release}/source
+	rm -rf "$_outdir"/lib/firmware
 
-        install -D include/config/kernel.release \
-                "$_outdir"/usr/share/kernel/$_buildflavor/kernel.release
+	install -D include/config/kernel.release \
+		"$_outdir"/usr/share/kernel/$_buildflavor/kernel.release
 }
 
 # main flavor installs in $pkgdir
 package() {
-        _package rpi "$pkgdir"
+	_package rpi "$pkgdir"
 }
 
 # subflavors install in $subpkgdir
 rpi2() {
-        _package rpi2 "$subpkgdir"
+	_package rpi2 "$subpkgdir"
 }
 
 _dev() {
-        local _flavor=$(echo $subpkgname | sed -E 's/(^linux-|-dev$)//g')
-        local _abi_release=${pkgver}-${pkgrel}-$_flavor
-        # copy the only the parts that we really need for build 3rd party
-        # kernel modules and install those as /usr/src/linux-headers,
-        # simlar to what ubuntu does
-        #
-        # this way you dont need to install the 300-400 kernel sources to
-        # build a tiny kernel module
-        #
-        pkgdesc="Headers and script for third party modules for $_flavor kernel"
-        depends="gmp-dev bash"
-        local dir="$subpkgdir"/usr/src/linux-headers-${_abi_release}
+	local _flavor=$(echo $subpkgname | sed -E 's/(^linux-|-dev$)//g')
+	local _abi_release=${pkgver}-${pkgrel}-$_flavor
+	# copy the only the parts that we really need for build 3rd party
+	# kernel modules and install those as /usr/src/linux-headers,
+	# simlar to what ubuntu does
+	#
+	# this way you dont need to install the 300-400 kernel sources to
+	# build a tiny kernel module
+	#
+	pkgdesc="Headers and script for third party modules for $_flavor kernel"
+	depends="gmp-dev bash"
+	local dir="$subpkgdir"/usr/src/linux-headers-${_abi_release}
 
-        # first we import config, run prepare to set up for building
-        # external modules, and create the scripts
-        mkdir -p "$dir"
-        cp "$srcdir"/config-$_flavor.${CARCH} "$dir"/.config
-        make -j1 -C "$srcdir"/linux-$_commit O="$dir" HOSTCC="${CC:-gcc}" \
-                silentoldconfig prepare modules_prepare scripts
+	# first we import config, run prepare to set up for building
+	# external modules, and create the scripts
+	mkdir -p "$dir"
+	cp "$srcdir"/config-$_flavor.${CARCH} "$dir"/.config
+	make -j1 -C "$srcdir"/linux-$_commit O="$dir" HOSTCC="${CC:-gcc}" \
+		silentoldconfig prepare modules_prepare scripts
 
-        # remove the stuff that points to real sources. we want 3rd party
-        # modules to believe this is the soruces
-        rm "$dir"/Makefile "$dir"/source
+	# remove the stuff that points to real sources. we want 3rd party
+	# modules to believe this is the soruces
+	rm "$dir"/Makefile "$dir"/source
 
-        # copy the needed stuff from real sources
-        #
-        # this is taken from ubuntu kernel build script
-        # http://kernel.ubuntu.com/git/ubuntu/ubuntu-zesty.git/tree/debian/rules.d/3-binary-indep.mk
-        cd "$srcdir"/linux-$_commit
-        find .  -path './include/*' -prune \
-                -o -path './scripts/*' -prune -o -type f \
-                \( -name 'Makefile*' -o -name 'Kconfig*' -o -name 'Kbuild*' -o \
-                   -name '*.sh' -o -name '*.pl' -o -name '*.lds' \) \
-                -print | cpio -pdm "$dir" || return 1
+	# copy the needed stuff from real sources
+	#
+	# this is taken from ubuntu kernel build script
+	# http://kernel.ubuntu.com/git/ubuntu/ubuntu-zesty.git/tree/debian/rules.d/3-binary-indep.mk
+	cd "$srcdir"/linux-$_commit
+	find .	-path './include/*' -prune \
+		-o -path './scripts/*' -prune -o -type f \
+		\( -name 'Makefile*' -o -name 'Kconfig*' -o -name 'Kbuild*' -o \
+		   -name '*.sh' -o -name '*.pl' -o -name '*.lds' \) \
+		-print | cpio -pdm "$dir" || return 1
 
-        cp -a scripts include "$dir" || return 1
-        find $(find arch -name include -type d -print) -type f \
-                | cpio -pdm "$dir"
+	cp -a scripts include "$dir" || return 1
+	find $(find arch -name include -type d -print) -type f \
+		| cpio -pdm "$dir"
 
-        install -Dm644 "$srcdir"/build-$_flavor/Module.symvers \
-                "$dir"/Module.symvers
+	install -Dm644 "$srcdir"/build-$_flavor/Module.symvers \
+		"$dir"/Module.symvers
 
-        mkdir -p "$subpkgdir"/lib/modules/${_abi_release}
-        ln -sf /usr/src/linux-headers-${_abi_release} \
-                "$subpkgdir"/lib/modules/${_abi_release}/build
+	mkdir -p "$subpkgdir"/lib/modules/${_abi_release}
+	ln -sf /usr/src/linux-headers-${_abi_release} \
+		"$subpkgdir"/lib/modules/${_abi_release}/build
 }
 
 
-sha512sums="5123df7a87ef785fd29c63f7f8f9dab1a677a923eba0d7283e418ceb201d242f25e03a50dd9584f5c8197a1a5b3204fbfc1f29283ee181ec13aecfa143d0fac4  a2092141807514666a273971cc8fa9e80f14439f.tar.gz
+sha512sums="1485315bc3cc83c38c1bf60bf51cc1af63e5ff490ef9f1f7a62ee7d077a08682ddc6750901c123b6326a8ac7534fd781cc4216e4f852caca47313ee3535a2ce8  e3e047e02089bf95d28e1c8e2477e22752bed52e.tar.gz
 501c91bf2538a18102da59bbccc3097f9c3c90079acc0e946ff075074160c09b8a66934e5ce5470e170f0e4f93d114709a95230367426d0bb7ea02c4bdf4cc9b  issue-4973.patch
-4e5ece2e4d5d2a636740baed5ce075538b0be0eb867bd0d7b13dea7644ffec9b9928ff707a5a9f6de66db39c0806ea79a7a614e7964c75e45bf3dcbbdc4170df  config-rpi.armhf
-f3ec2673fcba021c605223c8998c6ca867b2307f10bc4e26da1e2b20937f8b6494aab2744609b5c95ee53184c1652451920239cdd172383170597c34a1ea326d  config-rpi2.armhf
+b7f22fed203cb3385e52c2c72dd8581799823ffdfa58fc78026c167b938d420d453f9e925bfb3922142e0ffc82b3bda34b7a748b231993137222e3596a20d8a5  config-rpi.armhf
+ccf32f2efd60f431d42f31f8ae0b46d60267967bf0f29aa4ba5b8da015db8c465760ff76c0c8599e53b7a7af0f07d5475eba2c798b405974b58c4cf844f841d5  config-rpi2.armhf
 a8e7f434c325c9dd7a9109efecad408e42a50ecd1391cb0c7d1d7de79609caee007486c8a6538231c74bdc5d7b84cbca053958e1b239bc0507e6d3598ace383a  markdt"
