@@ -14,6 +14,16 @@
 
 - bluez-tools
 
+### bootloader
+
+- raspberrypi-bootloader
+
+### firmware
+
+- linux-firmware
+
+- firmware-raspberrypi
+
 ### kernel
 
 - linux-rpi - alpine raspberry pi kernel with VC4 enabled
