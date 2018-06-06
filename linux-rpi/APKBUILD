@@ -36,6 +36,18 @@ done
 arch="armhf"
 license="GPL-2.0"
 
+_carch=${CARCH}
+case "$_carch" in
+aarch64*) _carch="arm64" ;;
+arm*) _carch="arm" ;;
+mips*) _carch="mips" ;;
+ppc*) _carch="powerpc" ;;
+s390*) _carch="s390" ;;
+esac
+
+HOSTCC="${CC:-gcc}"
+HOSTCC="${HOSTCC#${CROSS_COMPILE}}"
+
 prepare() {
 	local _patch_failed=
 	cd "$srcdir"/linux-$_commit
@@ -72,7 +84,7 @@ prepare() {
 		cp "$srcdir"/$_config "$_builddir"/.config || return 1
 		make -C "$srcdir"/linux-$_commit \
 			O="$_builddir" \
-			HOSTCC="${CC:-gcc}" \
+			ARCH="$_carch" HOSTCC="$HOSTCC" \
 			silentoldconfig || return 1
 	done
 }
@@ -80,7 +92,7 @@ prepare() {
 build() {
 	for i in $_flavors; do
 		cd "$srcdir"/build-$i
-		make CC="${CC:-gcc} -fno-pie" \
+		make ARCH="$_carch" CC="${CC:-gcc} -fno-pie" \
 			KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-Alpine" \
 			|| return 1
 	done
@@ -106,6 +118,7 @@ _package() {
 
 	cd "$srcdir"/build-$_buildflavor || return 1
 	make -j1 modules_install $_install \
+		ARCH="$_carch" \
 		INSTALL_MOD_PATH="$_outdir" \
 		INSTALL_PATH="$_outdir"/boot \
 		INSTALL_DTBS_PATH="$_outdir"/usr/lib/linux-${_abi_release} \
@@ -151,7 +164,7 @@ _dev() {
 	# external modules, and create the scripts
 	mkdir -p "$dir"
 	cp "$srcdir"/config-$_flavor.${CARCH} "$dir"/.config
-	make -j1 -C "$srcdir"/linux-$_commit O="$dir" HOSTCC="${CC:-gcc}" \
+	make -j1 -C "$srcdir"/linux-$_commit O="$dir" ARCH="$_carch" HOSTCC="$HOSTCC" \
 		silentoldconfig prepare modules_prepare scripts
 
 	# remove the stuff that points to real sources. we want 3rd party
