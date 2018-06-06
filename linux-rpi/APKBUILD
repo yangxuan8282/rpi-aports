@@ -9,7 +9,7 @@ pkgdesc="Linux kernel with Raspberry Pi patches"
 url=https://github.com/raspberrypi/linux
 depends="mkinitfs linux-firmware"
 makedepends="perl installkernel bash gmp-dev bc"
-options="!strip"
+options="!strip !tracedeps"
 install=
 # directly use downstream as source, instead of alpine upstream diff then patch way
 source="https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz
