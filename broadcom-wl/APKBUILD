@@ -1,0 +1,63 @@
+
+_flavor=${FLAVOR:-vanilla}
+_kpkg=linux-$_flavor
+_kver=4.14.52
+_krel=0
+
+_kpkgver="$_kver-r$_krel"
+_kabi="$_kver-$_krel-$_flavor"
+
+pkgname=broadcom-wl
+pkgver=6.30.223.271
+pkgrel=0
+pkgdesc="Broadcom 802.11abgn hybrid Linux networking device driver"
+url="https://www.broadcom.com/support/download-search/?pf=Wireless+LAN+Infrastructure"
+arch="x86_64"
+license="custom"
+depends="$_kpkg=$_kpkgver"
+makedepends="$_kpkg-dev=$_kpkgver linux-headers"
+source="https://docs.broadcom.com/docs-and-downloads/docs/linux_sta/hybrid-v35_64-nodebug-pcoem-${pkgver//./_}.tar.gz
+	modprobe.d
+	modules-load.d
+	001-null-pointer-fix.patch::https://git.archlinux.org/svntogit/community.git/plain/trunk/001-null-pointer-fix.patch?h=packages/broadcom-wl-dkms
+	002-rdtscl.patch::https://git.archlinux.org/svntogit/community.git/plain/trunk/002-rdtscl.patch?h=packages/broadcom-wl-dkms
+	003-linux47.patch::https://git.archlinux.org/svntogit/community.git/plain/trunk/003-linux47.patch?h=packages/broadcom-wl-dkms
+	004-linux48.patch::https://git.archlinux.org/svntogit/community.git/plain/trunk/004-linux48.patch?h=packages/broadcom-wl-dkms
+	005-debian-fix-kernel-warnings.patch::https://git.archlinux.org/svntogit/community.git/plain/trunk/005-debian-fix-kernel-warnings.patch?h=packages/broadcom-wl-dkms
+	006-linux411.patch::https://git.archlinux.org/svntogit/community.git/plain/trunk/006-linux411.patch?h=packages/broadcom-wl-dkms
+	007-linux412.patch::https://git.archlinux.org/svntogit/community.git/plain/trunk/007-linux412.patch?h=packages/broadcom-wl-dkms"
+options="!check"
+
+builddir=${srcdir}
+
+prepare() {
+	default_prepare
+}
+
+build() {
+	cd "${srcdir}"
+
+	make -C /lib/modules/${_kabi}/build M=`pwd`
+} 
+
+package() {
+	cd "${srcdir}"
+#	mkdir -p "${pkgdir}/lib/modules/${_kabi}/kernel/drivers/net/wireless"
+#	cp *.ko "${pkgdir}/lib/modules/${_kabi}/kernel/drivers/net/wireless""${pkgdir}/lib/modules/${_kabi}/kernel/drivers/net/wireless"/
+
+	install -Dm644 wl.ko "${pkgdir}/lib/modules/${_kabi}/kernel/drivers/net/wireless/wl.ko"
+
+	install -Dm644 lib/LICENSE.txt "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+	install -Dm644 modprobe.d "${pkgdir}/etc/modprobe.d/broadcom-wl.conf"
+	install -Dm644 modules-load.d "${pkgdir}/etc/modules-load.d/wl.conf"
+}
+sha512sums="6855781f7c69a9aecb9461932423688964879d5a4df571f01ae7adaa7bf21a410bef839605d555afb6c8f4eec92fe8510af6cb120930095617ff6cdcccedaf17  hybrid-v35_64-nodebug-pcoem-6_30_223_271.tar.gz
+cca8b53dc8c54ec3c5d2064ad6fc490008f72baf69a95bfc771df8ac040abb4475df815a1dd004dd11e0b4b5438f450e879db414cc805a501b9a7ea24b2e00b5  modprobe.d
+826e3610c0fcc4dc5cb458bb17bf7f42919abe1b3837ebdad78688e57a69a069c5d19793ea2e2ed08790a9977010074dae155d5e0cde7649888742bfc7120d81  modules-load.d
+4403cad0360b01f8e88faccb77e6239865e9cc2b68dac62896153ab37957f1e73e5e4c95d3e81dac334106a2cd4ef0784955a5fefd8abc6e793a68f182bbffe4  001-null-pointer-fix.patch
+b483a4fd5fbb5a4697365b6ddcd8034b4d90ddee9bf2aecf003b0fd6838a708d3e84be33b08acdbe165d440480da25fdf0dfff0d2fe12fa2c5271c51d6ac74c0  002-rdtscl.patch
+f61ecfb6b8c5a377c7a4da7549c9ec75677782fa2f97e64de0df1259e0ec3b993cfa3eaa4ff50331703ee18ef28f2af0d09839dd3b63ed994e6b29cbfe8ed73f  003-linux47.patch
+e5959921b6f0cd5d61d7ed568f549b0920f394458c28257c05064b89d7067ce11c8e44ed0e5a48a65bd041c6193d9ae2d02fca2f5efbfb787d3f9001786a4578  004-linux48.patch
+6209a0a5a46a3efcede3cb1e263467173153d779b6267ba4c20f46421a9abd8743a7068527ace350a3da3ef3046b0399e09b37aba917fabe020c8c2600b60fdf  005-debian-fix-kernel-warnings.patch
+b7db17e30731a9cbc940b83f7b62f059529cff6c134e47e2176cd7c6fcd8d028334ed4fe1fdce7cf1aef87590f9664b463383ae3302a6e2aabe1baa79fbc5c95  006-linux411.patch
+3b73136488daa2d59586bb7ce704fcb73b7a719bf150517beab1f13f7fb9626281e03dd7ffd3557aa894ce806b6ceef678f3f979b11e762890f20e04d19d2e04  007-linux412.patch"
