@@ -1,10 +1,10 @@
 # Maintainer: Yangxuan <yangxuan8282@gmail.com>
 pkgname=xf86-video-fbturbo
 pkgver=3.9.6
-pkgrel=0
+pkgrel=1
 pkgdesc="X.org MALI video driver"
 url="https://github.com/asb/xf86-video-fbturbo"
-arch="all"
+arch="armhf"
 license="MIT"
 subpackages="$pkgname-doc"
 depends=

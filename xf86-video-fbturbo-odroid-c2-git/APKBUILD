@@ -1,0 +1,43 @@
+# Maintainer: Yangxuan <yangxuan8282@gmail.com>
+pkgname=xf86-video-fbturbo-odroid-c2-git
+pkgver=20180817
+_commit=815280196e8929feb09e72f4325c180259a309ac
+pkgrel=3
+pkgdesc="X.org MALI video driver"
+url="https://github.com/tnmeyer/xf86-video-fbturbo"
+arch="aarch64"
+license="MIT"
+subpackages="$pkgname-doc"
+depends=
+makedepends="autoconf automake libtool xorg-server-dev util-macros fontsproto"
+source="$pkgname-$pkgver.tar.gz::$url/archive/$_commit.tar.gz
+	0001-Use-own-thunk-functions-instead-of-fbdevHW-Weak.patch::https://github.com/archlinuxarm/PKGBUILDs/raw/master/alarm/xf86-video-fbturbo-odroid-c2-git/0001-Use-own-thunk-functions-instead-of-fbdevHW-Weak.patch"
+options="!check"
+
+builddir="$srcdir"/$pkgname-$_commit
+
+prepare() {
+    default_prepare
+}
+
+build() {
+	cd "$builddir"
+	export LDFLAGS="$LDFLAGS -Wl,-z,lazy"
+	./autogen.sh || return 1
+	./configure \
+		--build=$CBUILD \
+		--host=$CHOST \
+		--prefix=/usr \
+		|| return 1
+	make || return 1
+}
+
+package() {
+	cd "$builddir"
+	mkdir -p "$pkgdir"/etc/X11/xorg.conf.d/
+	cp xorg.conf "$pkgdir"/etc/X11/xorg.conf.d/99-fbturbo.conf
+	make DESTDIR="$pkgdir" install || return 1	
+	install -Dm644 COPYING "$pkgdir"/usr/share/licenses/$pkgname/COPYING
+}
+sha512sums="1cf78b4dc03ef57922c919fce3a34b52055e195fefbe289e80896edc5130cd43ee96baefed240991ca414192377c04ea539f1f017e4edc39943ca36e18ceac48  xf86-video-fbturbo-3.9.6.tar.gz
+922eb8283933975fe7c98323e9cf4c5c5558c8ccbf3f4640c2dee20a98d7a286b9d3eedac187934bfcc575e672a6bb56bce377f525e17838f2d25308d49242d9  0001-Use-own-thunk-functions-instead-of-fbdevHW-Weak.patch"
