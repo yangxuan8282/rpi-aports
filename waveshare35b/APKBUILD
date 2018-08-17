@@ -1,10 +1,10 @@
 # Maintainer: He Yangxuan <yangxuan8282@gmail.com>
 pkgname=waveshare35b
 pkgver=20180331
-pkgrel=2
+pkgrel=3
 pkgdesc="Waveshare 3.5inch RPi LCD (B) drivers"
 url="http://www.waveshare.net/wiki/3.5inch_RPi_LCD_(B)"
-arch="armhf"
+arch="noarch"
 license="multiple"
 depends="xf86-input-evdev xinput_calibrator"
 install="$pkgname.post-install
@@ -16,7 +16,7 @@ source="http://www.waveshare.net/w/upload/3/34/LCD-show-180331.tar.gz
 options="!check"
 
 package() {
-        install -Dm644 waveshare.txt "${pkgdir}"/media/mmcblk0p1/waveshare.txt
+        install -Dm644 waveshare.txt "${pkgdir}"/boot/waveshare.txt
 
         install -Dm755 set-orientation "${pkgdir}"/usr/bin/set-orientation
 
@@ -25,7 +25,7 @@ package() {
         mkdir -p "$pkgdir"/usr/share/X11/xorg.conf.d/
         mkdir -p "$pkgdir"/etc/X11/xorg.conf.d
         
-        install -Dm644 waveshare35b-overlay.dtb "${pkgdir}"/media/mmcblk0p1/overlays/waveshare35b.dtbo
+        install -Dm644 waveshare35b-overlay.dtb "${pkgdir}"/boot/overlays/waveshare35b.dtbo
         
         cp usr/share/X11/xorg.conf.d/99-fbturbo.conf "${pkgdir}"/usr/share/X11/xorg.conf.d/
         
@@ -34,7 +34,7 @@ package() {
 }
 
 sha512sums="adfb2950d92a3f69e72f424c4782416a603355e9323843b385e98d3c86f75dd2d6b02938a77f933de02bb0d4e0dc626e4934c5dc2455949b922f9eb6411bd0c6  LCD-show-180331.tar.gz
-bd05230fa179c3ffa572f57bfad6b06cc524ea025d77c6538ad3c7220873c2b5133334275004fde19cd685c044866c4c94575c8ae2e8d8d854415e3d9417b825  waveshare35b.post-install
-8fbf2f2c9aa3ff3dc2bd51fa89b6de53a0d2f21130c76f6739165fa9eab1f3eba6c1e2d0080555b5cf8339f126ae315095c6b2462cff2d7e6c802a425b4f0729  waveshare35b.post-deinstall
+43a97cc3a786386c30355f17d378b6d7d4134eba9ca2fd9762bbd25e41d46acf4e9341905ad091d0c533fbb6f82b40e6156dc25d5780d72fccfbce99fea46b5d  waveshare35b.post-install
+cea9d31b0ba0cbf5f65a9cfae5b371aed1dced41c9203f0e592f84612d24b9a71ba49cc92edd14a4c275300451bba0ff3798277ae174ef5fe4ffe864694bf59a  waveshare35b.post-deinstall
 bbd644af7a7e7e0f808b57ffa4085a147cc4936c064fb77a415cbd637498822125df7426daed01aaa31ea86f3efccfe1843fabe5fb5511b870584a935a517008  waveshare.txt
-c5ddfd7844e8a5ac79f04bd2267212325c7736d8743d8f08af1f42bd5c7a28c13dcdcc813f423521ae576caa8f9b1f35b8344a1de6891061bd140164d85e76ce  set-orientation"
+3e72e133995c17ec27ede14b4850daa713fa2f2139f807bb4e07d1f8c9688a20ed648487038173b276daf90b7db4e5e31530eb1a09db06ffd0cba28cfbbd4b2a  set-orientation"

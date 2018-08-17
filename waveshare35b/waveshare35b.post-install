@@ -6,7 +6,7 @@ cp -rf /usr/share/X11/xorg.conf.d/10-evdev.conf /usr/share/X11/xorg.conf.d/45-ev
 
 test -e /usr/lib/xorg/modules/drivers/fbturbo_drv.so || sed -i 's/fbturbo/fbdev/' /usr/share/X11/xorg.conf.d/99-fbturbo.conf
 
-echo "fbcon=map:10 fbcon=font:ProFont6x11 logo.nologo" >> /media/mmcblk0p1/cmdline.txt
+echo "fbcon=map:10 fbcon=font:ProFont6x11 logo.nologo" >> /boot/cmdline.txt
 
-echo "include waveshare.txt" >> /media/mmcblk0p1/config.txt
+echo "include waveshare.txt" >> /boot/config.txt
 

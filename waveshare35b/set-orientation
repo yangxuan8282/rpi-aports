@@ -4,7 +4,7 @@
 set -eu
 
 NEW_DEGREE=$1
-CONFIG_FILE="/media/mmcblk0p1/waveshare.txt"
+CONFIG_FILE="/boot/waveshare.txt"
 
 die() {
         printf '\033[1;31mERROR:\033[0m %s\n' "$@" >&2  # bold red
