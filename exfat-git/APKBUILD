@@ -1,0 +1,38 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=exfat-git
+_gitname=exfat-nofuse
+pkgver=20180417
+pkgrel=0
+_commit=01c30ad52625a7261e1b0d874553b6ca7af25966
+pkgdesc="Native (nofuse) kernel module for EXtendedFAT support"
+arch="all"
+url="https://github.com/dorimanx/exfat-nofuse"
+license="GPL2"
+depends="exfat-utils-nofuse"
+makedepends="linux-vanilla-dev"
+provides="fuse-exfat"
+replaces="fuse-exfat"
+options="!check !strip"
+source="$url/archive/${_commit}.tar.gz
+	4.18.patch"
+
+builddir=$srcdir/$_gitname-$_commit
+
+prepare() {
+	default_prepare
+	
+}
+
+build() {
+	cd $builddir
+	make
+}
+
+package() {
+	cd $builddir
+	install -Dm644 exfat.ko "${pkgdir}/lib/modules/${_kabi}/kernel/fs/exfat/exfat.ko"
+}
+
+sha512sums="47c09f12d53337f634e64a574260fef0f85a4948292bfae82c82b8000e9fab9538a95a44ec41707e9f69cdb18bc9e97894cd9c38bf058da33f4218bb86064d89  01c30ad52625a7261e1b0d874553b6ca7af25966.tar.gz
+8cf85e1c19cc47497a41a9568a15ff2ea188a69ebce5b4e9e75e58a18a4c1008e59f8b351373a0bf85504553529875a5a597275fcf850b1f0ba9bbcfc5fb12e9  4.18.patch"
