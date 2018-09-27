@@ -1,0 +1,23 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=ranger
+pkgver=1.9.2
+pkgrel=0
+pkgdesc="A simple, vim-like file manager."
+arch="noarch"
+url="https://github.com/ranger/ranger"
+license="GPL"
+subpackages="$pkgname-doc"
+depends="python3"
+source="$pkgname.tar.gz::$url/archive/v${pkgver}.tar.gz"
+options="!check"
+
+builddir=$srcdir/$pkgname-${pkgver}
+
+package() {
+  cd $builddir
+  python3 setup.py -q install --root="$pkgdir" --optimize=1
+  install -Dm644 LICENSE $pkgdir/usr/share/licenses/${pkgname}/LICENSE
+}
+
+sha512sums="5eb4743beaf0478d745cce8e5bfc2ac07c98ab5784e9394772782d06c0bb27dcd5478ead191ac527f21cce76db09a51eb46db0fabc7993684a6b5aaec0d43104  ranger.tar.gz"
