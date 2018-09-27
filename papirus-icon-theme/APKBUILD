@@ -1,0 +1,76 @@
+# Maintainer: He Yangxuan <yangxuan8282@gmail.com>
+
+pkgname=papirus-icon-theme
+pkgver=20180816
+pkgrel=0
+pkgdesc="Papirus icon theme for Linux"
+url="https://github.com/PapirusDevelopmentTeam/papirus-icon-theme"
+arch="noarch"
+license="GPL-3.0"
+depends=""
+makedepends=""
+options="!strip !check"
+subpackages="$pkgname-epapirus $pkgname-papirus $pkgname-papirus-adapta $pkgname-papirus-adapta-nokto $pkgname-papirus-dark 
+$pkgname-papirus-light"
+source="papirus-icon-theme-$pkgver.tar.gz::$url/archive/$pkgver.tar.gz"
+builddir="$srcdir/papirus-icon-theme-$pkgver"
+
+package() {
+	install -d "$pkgdir"/papirus-icon-theme
+}
+
+epapirus() {
+	pkgdesc="Papirus icon theme for Linux(for elementary OS and Pantheon Desktop)"
+	options="!strip !check"
+
+	cd $builddir
+	install -d "$subpkgdir"/usr/share/icons
+	cp -R ePapirus "$subpkgdir"/usr/share/icons
+}
+
+papirus() {
+	pkgdesc="Papirus icon theme for Linux(for Arc / Arc Darker)"
+	options="!strip !check"
+
+	cd $builddir
+	install -d "$subpkgdir"/usr/share/icons
+	cp -R Papirus "$subpkgdir"/usr/share/icons
+}
+
+adapta() {
+	pkgdesc="Papirus icon theme for Linux(for Adapta)"
+	options="!strip !check"
+
+	cd $builddir
+	install -d "$subpkgdir"/usr/share/icons
+	cp -R Papirus-Adapta "$subpkgdir"/usr/share/icons
+}
+
+nokto() {
+	pkgdesc="Papirus icon theme for Linux(for Adapta Nokto)"
+	options="!strip !check"
+
+	cd $builddir
+	install -d "$subpkgdir"/usr/share/icons
+	cp -R Papirus-Adapta-Nokto "$subpkgdir"/usr/share/icons
+}
+
+dark() {
+	pkgdesc="Papirus icon theme for Linux(for Arc Dark)"
+	options="!strip !check"
+
+	cd $builddir
+	install -d "$subpkgdir"/usr/share/icons
+	cp -R Papirus-Dark "$subpkgdir"/usr/share/icons
+}
+
+light() {
+	pkgdesc="Papirus icon theme for Linux(light theme with Breeze colors)"
+	options="!strip !check"
+
+	cd $builddir
+	install -d "$subpkgdir"/usr/share/icons
+	cp -R Papirus-Light "$subpkgdir"/usr/share/icons
+}
+
+sha512sums="bb92bbba1f801e6e66a09ebbee369fd27e520b4fa713f65ba1bc6539a08cff5406f9d68f9060aac95590470d3e7ca18a6c484b170267e2fd26f9531e6b53056d  papirus-icon-theme-20180816.tar.gz"
